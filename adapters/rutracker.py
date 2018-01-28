@@ -1,8 +1,10 @@
 import requests
+from .base_proxy import BaseProxy
 
 # TODO: Минимальное логгирование успешной авторизации
 # TODO: кукисы из файла
-class RutrackerProxy(object):
+# TODO: реагировать на капчуху
+class RutrackerProxy(BaseProxy):
 
     categories = ["All"]
     results_on_page = 50
@@ -14,7 +16,6 @@ class RutrackerProxy(object):
             'login_password' : password,
             'login' : '%D0%92%D1%85%D0%BE%D0%B4'
             }, proxies=proxies)
-        print(rq.text)
 
     def isLogin(self):
         return bool(self.rs.cookies)
