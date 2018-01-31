@@ -1,21 +1,21 @@
 from abc import *
-from .category import Category
+from ..utils import Category
 
 """
 Интерфейс (Абстрактный класс) для реализации в адаптерах
 """
 
-class BaseProxy(metaclass = ABCMeta):
+class Base(metaclass = ABCMeta):
 
     @abstractproperty
     def categories(self):
         pass
 
-    def isSupportCategory(self, category):
+    def is_support_category(self, category):
         return (category in categories or category == Category.All)
 
     @abstractmethod
-    def isLogin(self):
+    def is_login(self):
         pass
 
     @abstractmethod

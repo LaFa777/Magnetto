@@ -1,10 +1,10 @@
 import requests
-import adapters
+import trackers
 import os
 
 def main():
-    obj = getattr(adapters, "RutrackerProxy")(os.environ['LOGIN'], os.environ['PASSWORD'])
-    print(obj.isLogin())
+    obj = getattr(trackers.apis, "Rutracker")(os.environ['LOGIN'], os.environ['PASSWORD'])
+    print(obj.is_login())
 
 if __name__ == '__main__':
     main()
