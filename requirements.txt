@@ -1,4 +1,3 @@
-wheel
-PySocks
-requests
-requests[socks]
+pycurl
+lxml
+grab
