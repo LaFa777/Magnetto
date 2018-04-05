@@ -1,47 +1,26 @@
 from abc import *
-import grab
-from ..utils import Category
+from grab import Grab
+from grab.error import GrabAuthError
+from ..core import *
 
-"""
-Интерфейс (Абстрактный класс) для реализации в адаптерах
-"""
 
-class Base(metaclass = ABCMeta):
+class Base(metaclass=ABCMeta):
 
-    def __init__(self, grab, login=None, password=None):
+    def __init__(self, grab: Grab, login: str, password: str):
         self.grab = grab.clone()
-        self.authorization(login, password)
-
-    def authorization(self, login, password):
-        if(not password):
-            login = self.login
-            password = self.password
-        else:
-            self.login = login
-            self.password = password
-
-        if (not password):
-            raise ValueError("password и login не определены")
-
-        if self.is_login():
-            return
-
-        self._authorization_request(login, password)
+        self.login = login
+        self.password = password
+        self.authorization(self.login, self.password)
 
     @abstractmethod
-    def _authorization_request(self, login, password):
+    def authorization(self, login: str, password: str):
         pass
 
-    def is_login(self):
-        return bool(self.grab.cookies.items())
-
-    @abstractproperty
-    def categories(self):
-        pass
-
-    def is_support_category(self, category):
-        return (category in categories or category == Category.All)
+    # простая проверка на факт успешного логина
+    def check_is_login(self, doc):
+        if not doc.text_search(self.login):
+            raise GrabAuthError
 
     @abstractmethod
-    def search(self, value, category=Category.All, page=1):
+    def search(self, value: str, cats=None, page=0, limit=0, order_by=OrderBy.DOWNLOADS, order=Order.DESC):
         pass
