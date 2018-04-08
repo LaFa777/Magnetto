@@ -2,6 +2,7 @@ from abc import *
 from grab import Grab
 from grab.error import GrabAuthError
 from ..core import *
+from ..core.errors import TrackersAuthError
 
 
 class Base(metaclass=ABCMeta):
@@ -10,7 +11,6 @@ class Base(metaclass=ABCMeta):
         self.grab = grab.clone()
         self.login = login
         self.password = password
-        self.authorization(self.login, self.password)
 
     @abstractmethod
     def authorization(self, login: str, password: str):
@@ -19,7 +19,7 @@ class Base(metaclass=ABCMeta):
     # простая проверка на факт успешного логина
     def check_is_login(self, doc):
         if not doc.text_search(self.login):
-            raise GrabAuthError
+            raise TrackersAuthError("Error authorization")
 
     @abstractmethod
     def search(self, value: str, cats=None, page=0, limit=0, order_by=OrderBy.DOWNLOADS, order=Order.DESC):

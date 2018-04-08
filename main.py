@@ -5,7 +5,6 @@ import inspect
 from grab import Grab
 from trackers.core import Category
 
-
 def init_apis():
     """
     Инициализирует апишки к трекерам
@@ -29,10 +28,7 @@ def init_apis():
                     class_name=name
                 ))
             # настройка прокси сервера
-            if settings.PROXY and settings.PROXY_TYPE:
-                grab.setup(proxy=settings.PROXY,
-                           proxy_userpwd=settings.PROXY_USERPWD,
-                           proxy_type=settings.PROXY_TYPE)
+            grab.setup(proxy=settings.PROXY)
 
             # логин и пароль читаем из аргументов
             login = settings.trackers[name]["login"]
@@ -41,6 +37,14 @@ def init_apis():
                 print("Api " + name +
                       " не инициализировано (не установлены логин или пароль)")
             apis[name] = obj(grab, login, password)
+
+            # попытаем авторизоваться
+            try:
+                apis[name].authorization()
+            except trackers.core.errors.TrackersCaptchaError as err:
+                print(err)
+                str = input()
+                apis[name].authorization(captcha_str=str)
     return apis
 
 

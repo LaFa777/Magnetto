@@ -5,6 +5,7 @@ from ..parsers.search import Rutracker as RutrackerSearchParser
 from ..parsers.topic import Rutracker as RutrackerTopicParser
 from urllib.parse import quote_plus
 from grab.error import GrabAuthError, DataNotFound
+from ..core.errors import TrackersCaptchaError, TrackersAuthError
 
 class Rutracker(Base):
     home_url = "http://rutracker.org/forum/"
@@ -12,19 +13,40 @@ class Rutracker(Base):
     searchParser = RutrackerSearchParser()
     topicParser = RutrackerTopicParser()
 
-    def authorization(self, login: str, password: str):
-        try:
-            # TODO: реагировать на капчу
-            self.grab.go(self.home_url + 'login.php')
-            self.grab.doc.set_input('login_username', login)
-            self.grab.doc.set_input('login_password', password)
-            doc = self.grab.doc.submit()
+    def authorization(self, login:str = None, password:str = None, captcha_str = ""):
+        if not password:
+            login = self.login
+            password = self.password
 
-            # простая проверка на факт успешного входа
-            self.check_is_login(doc)
+        # если форме необходим ввод капчи, то выполним ввод в старую форму
+        # из прошлого запроса
+        if not captcha_str:
+            doc = self.grab.go(self.home_url + 'login.php')
+        else:
+            doc = self.grab.doc
+
+        # проверяем на наличие капчи на странице
+        img_captcha = doc.tree.xpath('//img[contains(@src,"/captcha/")]/@src')
+        if img_captcha and not captcha_str:
+            raise TrackersCaptchaError(img_captcha[0])
+
+        # заполняем форму входа
+        try:
+            if captcha_str:
+                cap_code = doc.set_input_by_xpath('//input[starts-with(@name,"cap_code_")]', captcha_str)
+
+            doc.set_input('login_username', login)
+            doc.set_input('login_password', password)
+        # вход уже выполнен
         except DataNotFound:
-            # вход уже выполнен
-            pass
+            return
+
+        doc = self.grab.doc.submit()
+
+        # простая проверка на факт успешного входа
+        self.check_is_login(doc)
+
+        return
 
     # информация по поиску по рутрекеру
     # s:2 (убывание) 1 (возрастание)
@@ -82,7 +104,7 @@ class Rutracker(Base):
         # проверяем, что при выполнении запроса мы были залогинены
         try:
             self.check_is_login(doc)
-        except GrabAuthError:
+        except TrackersAuthError:
             # попробуем перезайти
             self.authorization(self.login, self.password)
             return search(value, categories, page, limit, order_by, order)
