@@ -1,3 +1,7 @@
 grab
 lxml
+# для pycurl транспорта (транспорт по умолчанию, не работает на винде)
 pycurl
+# для urllib3 транспорта
+# pysocks
+# urllib3[socks]
