@@ -4,6 +4,23 @@ from abc import ABC, abstractmethod, abstractproperty
 from magnetto import MagnettoAuthError
 
 
+class LastRequestMixin(object):
+    """Функционал для получения последнего запроса
+    """
+
+    def get_last_request_data(self):
+        """
+        Return:
+            :obj:`Dict`:
+            * :obj:`"url"` последний запрошенный url
+            * :obj:`"post"` данные последнего post запроса
+        """
+        return {
+            "url": self._grab.config["url"],
+            "post": self._grab.config["post"]
+        }
+
+
 class CheckAuthMixin(object):
     """Добавляет простейший функционал для проверки факта успешного входа
     """

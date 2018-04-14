@@ -10,7 +10,8 @@ from .parsers.parsers_core import (ResultParsePage, transformParseError)
 from .parsers.base_parser import BaseParser
 from .parsers.rutracker_parser import RutrackerParser
 
-from .apis.api_mixins import CheckAuthMixin, CategoryFilterMixin
+from .apis.api_mixins import (CheckAuthMixin, CategoryFilterMixin,
+                              LastRequestMixin)
 from .apis.base_api import BaseApi
 from .apis.rutracker_api import RutrackerApi
 
@@ -22,6 +23,7 @@ __all__ = [
     'MagnettoCaptchaError', 'MagnettoParseError',
     'Category', 'Order', 'OrderBy',
     'ResultParsePage', 'transformParseError', 'BaseParser', 'RutrackerParser',
-    'CheckAuthMixin', 'CategoryFilterMixin', 'BaseApi', 'RutrackerApi',
+    'CheckAuthMixin', 'CategoryFilterMixin', 'LastRequestMixin', 'BaseApi',
+    'RutrackerApi',
     'ApiDispatcher'
 ]

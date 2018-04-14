@@ -1,12 +1,12 @@
 from magnetto import (Category, OrderBy, Order, BaseApi, RutrackerParser,
                       RUTRACKER_URL, MagnettoCaptchaError, MagnettoAuthError,
                       MagnettoIncorrectСredentials, CheckAuthMixin,
-                      CategoryFilterMixin)
+                      CategoryFilterMixin, LastRequestMixin)
 from urllib.parse import quote_plus
 from grab.error import DataNotFound
 
 
-class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin):
+class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin, LastRequestMixin):
 
     HOME = RUTRACKER_URL
 
