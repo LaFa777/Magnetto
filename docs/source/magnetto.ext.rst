@@ -1,0 +1,6 @@
+Расширения
+==========
+
+.. toctree::
+
+  magnetto.apidispatcher
