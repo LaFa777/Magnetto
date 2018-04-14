@@ -18,7 +18,7 @@ class Mock(MagicMock):
             return Mock()
 
 
-MOCK_MODULES = ['pycurl', 'grab']
+MOCK_MODULES = ['pycurl', 'grab', 'grab.error']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- Path setup --------------------------------------------------------------
