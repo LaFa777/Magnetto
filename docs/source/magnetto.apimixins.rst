@@ -5,3 +5,4 @@
 
   magnetto.checkauthmixin
   magnetto.categoryfiltermixin
+  magnetto.lastrequestmixin
