@@ -6,6 +6,18 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
 
+from mock import Mock as MagicMock
+
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+
+MOCK_MODULES = ['pycurl', 'grab']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
