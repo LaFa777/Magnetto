@@ -1,12 +1,15 @@
-DEBUG = 1
-DEBUG_DIR = "" # сюда будут писаться результаты выполнения запроса
+from magnetto import RutrackerApi
 
-PROXY = "" # url:port
+LOG_DIR = "/tmp"  # директория, с результатами выполнения запросов (html файлы)
+COOCKIE_DIR = "/tmp"  # директория для coockie файлов
+
+PROXY = ""  # url:port
+PROXY_USERPWD = ""  # user:password
+PROXY_TYPE = ""  # socks5, socks4, http
 
 trackers = {
-    "Rutracker": {
-        "cookies_dir": "",
+    RutrackerApi: {
         "login": "",
         "password": ""
-    }
+    },
 }
