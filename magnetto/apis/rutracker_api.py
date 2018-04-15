@@ -1,14 +1,17 @@
+import magnetto
 from magnetto import (Category, OrderBy, Order, BaseApi, RutrackerParser,
-                      RUTRACKER_URL, MagnettoCaptchaError, MagnettoAuthError,
+                      MagnettoCaptchaError, MagnettoError, MagnettoAuthError,
                       MagnettoIncorrectСredentials, CheckAuthMixin,
                       CategoryFilterMixin, LastRequestMixin)
 from urllib.parse import quote_plus
 from grab.error import DataNotFound
+from grab import Grab
 
 
-class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin, LastRequestMixin):
+class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin,
+                   LastRequestMixin):
 
-    HOME = RUTRACKER_URL
+    HOME = None
 
     CATEGORIES = {
         Category.FILMS: "1105,1165,124,1245,1246,1247,1248,1250,1390,140,1543,"
@@ -18,17 +21,22 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin, LastRequestMixi
         "926,927,928,930,934,941"
     }
 
-    def __init__(self, grab):
+    def __init__(self, grab=Grab()):
         self._grab = grab.clone()
         self._parser = RutrackerParser()
         self._login = ""
         self._password = ""
+        self.HOME = magnetto.RUTRACKER_URL
 
     def authorization(self, login, password, captcha=None):
         # NOTE: Добавить возможность при повторном запросе передавать только
         # капчу?
         self._login = login
         self._password = password
+
+        if captcha and not self._grab.doc.body:
+            raise MagnettoError(
+                "Please execute .authorization(login, pass) first")
 
         # если форме необходим ввод капчи, то выполним ввод в старую форму
         # из прошлого запроса
@@ -38,7 +46,8 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin, LastRequestMixi
             doc = self._grab.doc
 
         # проверяем наличие капчи на странице
-        img_captcha = doc.tree.xpath('//img[contains(@src,"/captcha/")]/@src')
+        img_captcha = doc.tree.xpath(
+            '//img[contains(@src,"/captcha/")]/@src')
         if img_captcha and not captcha:
             raise MagnettoCaptchaError(self, img_captcha[0])
 
@@ -54,11 +63,11 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin, LastRequestMixi
         except DataNotFound:
             return True
 
-        self._grab.doc.submit()
+        doc = doc.submit()
 
-        # проверка на факт успешного входа
-        if self._grab.doc.tree.xpath(
-                '//*[@id="login-form-full"]/table/tbody/tr[2]/td/h4'):
+        # проверка правильности данных
+        if doc.tree.xpath(
+                '//*[@id="login-form-full"]//h4[contains(@class, "warn")]'):
             raise MagnettoIncorrectСredentials()
 
         return True

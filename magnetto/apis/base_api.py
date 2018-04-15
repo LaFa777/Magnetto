@@ -1,4 +1,5 @@
 from abc import ABC, abstractproperty, abstractmethod
+from grab import Grab
 from magnetto import (OrderBy, Order)
 
 
@@ -11,7 +12,7 @@ class BaseApi(ABC):
         pass
 
     @abstractmethod
-    def __init__(self, grab):
+    def __init__(self, grab=Grab()):
         """
         Args:
             grab (:obj:`grab.Grab`): Объект
