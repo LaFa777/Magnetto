@@ -3,5 +3,5 @@
 
 .. toctree::
 
-  magnetto.resultparsepage
+  magnetto.resultparsesearchpage
   magnetto.transformparseerror
