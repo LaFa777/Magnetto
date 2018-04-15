@@ -39,3 +39,10 @@ class TestRutrackerApi(unittest.TestCase):
                 api.authorization("bad", "bad")
             except MagnettoCaptchaError:
                 api.authorization("bad", "bad", "1234")
+
+    def test_search(self):
+        self.assertTrue(self.api.search("python"))
+
+        last_url = self.api.get_last_request_data()['url']
+
+        self.assertTrue('tracker.php?nm=python' in last_url)

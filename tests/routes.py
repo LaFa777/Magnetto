@@ -41,5 +41,8 @@ elif is_path("/login.php"):
     else:
         file('rutracker_login_with_captcha.html')
 
+elif is_path("/tracker.php") and query:
+    file('rutracker_search.html')
+
 else:
     error(404)
