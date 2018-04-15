@@ -11,3 +11,9 @@
     $ pip3 install turq
     $ turq -r routes.py -p 9877 --no-editor
     $ python3 -m unittest tests/test_rutracker_api.py
+
+Проверка покрытия проекта тестами::
+
+    $ pip3 install coverage
+    $ coverage run -m unittest tests/test_rutracker_api.py
+    $ coverage report
