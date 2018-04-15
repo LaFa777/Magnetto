@@ -3,6 +3,11 @@ class MagnettoError(Exception):
     """
 
 
+class MagnettoMisuseError(MagnettoError):
+    """Неправильное использование метода
+    """
+
+
 class MagnettoIncorrectСredentials(MagnettoError):
     """Неправильные пароль или логин. Вызывается при неудачной попытке
     авторизации.

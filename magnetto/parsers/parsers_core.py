@@ -2,7 +2,7 @@ from collections import namedtuple
 from magnetto import MagnettoParseError
 from grab.error import DataNotFound
 
-ResultParsePage = namedtuple("ResultParseSearchPage", [
+ResultParseSearchPage = namedtuple("ResultParseSearchPage", [
     "id",
     "name",
     "url",

@@ -6,7 +6,7 @@ class BaseParser(ABC):
     """
 
     @abstractmethod
-    def parse_search_page(self, doc):
+    def parse_search(self, doc):
         """Разбирает страницу поиска
 
         Args:
@@ -20,7 +20,7 @@ class BaseParser(ABC):
         """
 
     @abstractmethod
-    def parse_topic_page(self, doc):
+    def parse_topic(self, doc):
         """Разбирает страницу с топиком
 
         Args:

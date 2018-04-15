@@ -1,4 +1,4 @@
-from magnetto import (BaseParser, transformParseError, ResultParsePage,
+from magnetto import (BaseParser, transformParseError, ResultParseSearchPage,
                       RUTRACKER_URL)
 
 
@@ -7,11 +7,11 @@ class RutrackerParser(BaseParser):
     HOME = RUTRACKER_URL
 
     @transformParseError
-    def parse_search_page(self, doc):
+    def parse_search(self, doc):
         result_items = []
         for tr in doc.tree.xpath('//table[@id="tor-tbl"]/tbody/tr'):
             topic_id = tr.xpath('td[4]/div/a/@data-topic_id')[0]
-            item = ResultParsePage(
+            item = ResultParseSearchPage(
                 id=topic_id,
                 category=tr.xpath('td[3]/div/a/text()')[0],
                 name=tr.xpath('td[4]/div/a/text()')[0],
@@ -29,6 +29,6 @@ class RutrackerParser(BaseParser):
         return tuple(result_items)
 
     @transformParseError
-    def parse_topic_page(self, doc):
+    def parse_topic(self, doc):
         # TODO: переделать
         return doc.tree.xpath('//a[contains(@href,"magnet")]/@href')[0]

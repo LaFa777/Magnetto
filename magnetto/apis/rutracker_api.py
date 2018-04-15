@@ -1,8 +1,8 @@
 import magnetto
 from magnetto import (Category, OrderBy, Order, BaseApi, RutrackerParser,
-                      MagnettoCaptchaError, MagnettoError, MagnettoAuthError,
-                      MagnettoIncorrectСredentials, CheckAuthMixin,
-                      CategoryFilterMixin, LastRequestMixin)
+                      MagnettoCaptchaError, MagnettoMisuseError,
+                      MagnettoAuthError, MagnettoIncorrectСredentials,
+                      CheckAuthMixin, CategoryFilterMixin, LastRequestMixin)
 from urllib.parse import quote_plus
 from grab.error import DataNotFound
 from grab import Grab
@@ -35,7 +35,7 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin,
         self._password = password
 
         if captcha and not self._grab.doc.body:
-            raise MagnettoError(
+            raise MagnettoMisuseError(
                 "Please execute .authorization(login, pass) first")
 
         # если форме необходим ввод капчи, то выполним ввод в старую форму
@@ -73,7 +73,7 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin,
         return True
 
     # доп инфа: https://rutracker.org/forum/viewtopic.php?t=101236
-    def search(self, value, categories=[], page=0, limit=0,
+    def search(self, value, categories=[], page=0, limit=999,
                order_by=OrderBy.DOWNLOADS, order=Order.DESC):
 
         # вход не был выполнен
@@ -134,7 +134,7 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin,
         self.is_logged()
 
         # разбор страницы
-        searchItems = self._parser.parse_search_page(self._grab.doc)
+        searchItems = self._parser.parse_search(self._grab.doc)
 
         return searchItems[:limit]
 
