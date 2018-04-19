@@ -72,9 +72,12 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin,
 
         return True
 
+    # TODO: реализовать вспомогательные элементы поиска (* часть текста, +СЛОВО
+    # раздача должна содержать это слово, -СЛОВО исключить слово,
+    # СЛОВО | СЛОВО или)
     # доп инфа: https://rutracker.org/forum/viewtopic.php?t=101236
-    def search(self, value, categories=[], page=0, limit=999,
-               order_by=OrderBy.DOWNLOADS, order=Order.DESC):
+    def search(self, value, filters=[OrderBy.DOWNLOADS, Order.DESC], page=0,
+               limit=999):
 
         # вход не был выполнен
         if not self._login:
@@ -88,44 +91,57 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin,
             page=RESULTS_ON_PAGE * page
         )
 
-        # добавляем фильтр для сортировки
-        # s:2 (убывание) 1 (возрастание)
-        url += "&s="
-        url += "2" if (order == Order.DESC) else "1"
+        # TODO:
+        # Выдавать торренты за интервал – параметр: tm
+        # Значения:
+        # -1 - за все время
+        # 1 - за сегодня
+        # 3 - последние 3 дня
+        # 7 - посл. неделю
+        # 14 - посл. 2 недели
+        # 32 - последний месяц
+        pass
 
-        # добавляем колонку для сортировки
-        # o: 1 (Зарегистрирован) 2 (Название темы) 4 (Количество скачиваний)
-        # 10 (количество сидов) 11 (количество личей) 7 (количество сообщений)
-        # 8 (последнее сообщение)
-        url += "&o="
-        # зарегистрирован
-        if (order_by == OrderBy.CREATE):
-            url += "1"
+        # Сортировать выдачу по:
+        if Order.DESC in filters:
+            url += "&s=2"
+        elif Order.ASC in filters:
+            url += "&s=1"
+
+        # Упорядочить выдачу результатов по критерию:
+        # дата регистрации
+        if OrderBy.CREATE in filters:
+            url += "&o=1"
         # название темы
-        elif (order_by == OrderBy.NAME):
-            url += "2"
+        elif OrderBy.NAME in filters:
+            url += "&o=2"
         # Количество скачиваний
-        elif (order_by == OrderBy.DOWNLOADS):
-            url += "4"
+        elif OrderBy.DOWNLOADS in filters:
+            url += "&o=4"
         # количество сидов
-        elif (order_by == OrderBy.SEEDER):
-            url += "10"
+        elif OrderBy.SEEDERS in filters:
+            url += "&o=10"
         # количество личей
-        elif (order_by == OrderBy.LEECHER):
-            url += "11"
+        elif OrderBy.LEECHERS in filters:
+            url += "&o=11"
         # количество сообщений
-        elif (order_by == OrderBy.MESSAGES):
-            url += "7"
+        elif OrderBy.MESSAGES:
+            url += "&o=5"
+        # количество просмотров
+        elif OrderBy.VIEWS:
+            url += "&o=6"
+        # размер раздачи
+        elif OrderBy.SIZE:
+            url += "&o=7"
         # последнее сообщение
-        else:
-            url += "8"
+        elif OrderBy.LAST_MESSAGE:
+            url += "&o=8"
 
         # подготавливаем для запроса
         self._grab.setup(url=url)
 
         # добавляем фильтр по категориям
-        if categories:
-            self._add_category_filter(categories)
+        self._add_category_filter(filters)
 
         # выполняем сам запрос
         self._grab.request()
