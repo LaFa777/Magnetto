@@ -21,11 +21,11 @@ class KinozalParser(BaseParser):
                 category="",  # TODO:
                 name=tr.xpath('td[2]/a/text()')[0],
                 url=self.HOME + topic_link[1:],
-                size=tr.xpath('td[4]/text()')[0], # разбор размера в машинный формат
+                size=tr.xpath('td[4]/text()')[0], # разбор размера в байты
                 seeders=tr.xpath('td[5]/text()')[0],
                 leechers=tr.xpath('td[6]/text()')[0],
                 downloads="",  # TODO:
-                created=tr.xpath('td[7]/text()')[0], # преобразование в unix time
+                created=tr.xpath('td[7]/text()')[0], # в unix time
                 torrent=self.HOME + "download.php?id=" + str(topic_id),
                 magnet=""  # TODO:
             )

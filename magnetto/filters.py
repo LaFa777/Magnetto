@@ -87,6 +87,10 @@ class Registred(Enum):
 
 class TypeRelease(Enum):
     """Тип раздачи (для сохранения рейтинга на трекерах)
+
+    Attributes:
+        SILVER: засчитывается половина рейтинга
+        GOLD: рейтинг не считается
     """
     SILVER = 1
     GOLD = 2
