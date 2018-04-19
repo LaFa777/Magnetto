@@ -1,4 +1,4 @@
-from magnetto import RutrackerApi
+from magnetto import RutrackerApi, KinozalApi
 
 LOG_DIR = "/tmp"  # директория, с результатами выполнения запросов (html файлы)
 COOCKIE_DIR = "/tmp"  # директория для coockie файлов
@@ -12,4 +12,8 @@ trackers = {
         "login": "",
         "password": ""
     },
+    KinozalApi: {
+        "login": "",
+        "password": ""
+    }
 }
