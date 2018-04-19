@@ -1,5 +1,3 @@
-from fuzzywuzzy import process
-
 add_header("Content-Type", "text/html; charset=utf-8")
 
 directory_to_html = "./htmls/"

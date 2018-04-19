@@ -1,5 +1,6 @@
 import unittest
 from grab import Grab
+import magnetto
 from magnetto import RutrackerParser
 from .fixtures import mock_search_1
 
