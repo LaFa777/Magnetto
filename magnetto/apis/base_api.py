@@ -46,8 +46,8 @@ class BaseApi(ABC):
         """
 
     @abstractmethod
-    def search(self, value, categories=[], page=0, limit=0,
-               order_by=OrderBy.DOWNLOADS, order=Order.DESC):
+    def search(self, value, filters=[OrderBy.DOWNLOADS, Order.DESC], page=0,
+               limit=999):
         """Выполняет запрос поиска по трекеру.
 
         Args:
@@ -62,4 +62,5 @@ class BaseApi(ABC):
         Todo:
             * добавить фильтры на конечную выборку (ненулевые раздачи)
             * (исключение раздач с одинаковым размером)
+            * добавить задание фильтров по умолчанию глобально (.setup_filters)
         """
