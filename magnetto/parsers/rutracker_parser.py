@@ -1,10 +1,13 @@
-from magnetto import (BaseParser, transformParseError, ResultParseSearchPage,
-                      RUTRACKER_URL)
+import magnetto
+from magnetto import (BaseParser, transformParseError, ResultParseSearchPage)
 
 
 class RutrackerParser(BaseParser):
 
-    HOME = RUTRACKER_URL
+    HOME = None
+
+    def __init__(self):
+        self.HOME = magnetto.RUTRACKER_URL
 
     @transformParseError
     def parse_search(self, doc):
@@ -16,7 +19,6 @@ class RutrackerParser(BaseParser):
                 category=tr.xpath('td[3]/div/a/text()')[0],
                 name=tr.xpath('td[4]/div/a/text()')[0],
                 url=self.HOME + "viewtopic.php?t=" + str(topic_id),
-                author=tr.xpath('td[5]/div/a/text()')[0],
                 size=tr.xpath('td[6]/u/text()')[0],
                 seeders=tr.xpath('td[7]/u/text()')[0],
                 leechers=tr.xpath('td[8]/b/text()')[0],

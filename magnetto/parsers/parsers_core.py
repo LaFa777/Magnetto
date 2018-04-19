@@ -7,7 +7,6 @@ ResultParseSearchPage = namedtuple("ResultParseSearchPage", [
     "name",
     "url",
     "category",
-    "author",
     "size",
     "seeders",
     "leechers",
@@ -23,7 +22,6 @@ Attributes:
     name (str): название раздачи
     url (str): ссылка на страницу с раздачей
     category (str): категория
-    author (str): автор
     size (str): размер (в байтах)
     seeders (str): количество раздающих
     leechers (str): количество скачивающих
