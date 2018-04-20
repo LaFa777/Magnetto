@@ -1,3 +1,5 @@
+import re
+import time
 from collections import namedtuple
 from magnetto import MagnettoParseError
 from grab.error import DataNotFound
@@ -43,3 +45,31 @@ def transformParseError(function):
         except (DataNotFound, IndexError):
             raise MagnettoParseError
     return handleErrors
+
+
+def parse_date(str):
+    unix = 0
+
+    time_str = re.findall(r'\d{1,2}:\d{2}', str)[0]
+    date_str = re.findall(r'\d{1,2}\.\d{1,2}\.\d{4}', str)[0]
+
+    datetime_str = "{} {}".format(date_str, time_str)
+
+    unix = time.strptime(datetime_str, "%d.%m.%Y %H:%M")
+
+    # переводим в timestamp
+    return repr(time.mktime(unix))
+
+
+def parse_size(size_str):
+    size_parse = float(re.findall(r'[\d\.]+', size_str)[0])
+    size_mb = 0
+    if "ГБ" in size_str or "GB" in size_str:
+        size_mb = size_parse * 1024.0
+    elif "МБ" in size_str or "MB" in size_str:
+        size_mb = size_parse
+    # TODO: по умолчанию считать байтами?
+    else:
+        raise MagnettoParseError("Invalid parse size_str(\"{}\")".format(size_str))
+
+    return str(size_mb)

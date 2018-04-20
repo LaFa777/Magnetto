@@ -7,7 +7,8 @@ from .errors import (MagnettoError, MagnettoMisuseError,
 from .filters import (Category, Order, OrderBy, Year, Resolution, Source,
                       Registred, TypeRelease, Size)
 
-from .parsers.parsers_core import (ResultParseSearchPage, transformParseError)
+from .parsers.parsers_core import (ResultParseSearchPage, transformParseError,
+                                   parse_size, parse_date)
 from .parsers.base_parser import BaseParser
 from .parsers.rutracker_parser import RutrackerParser
 from .parsers.kinozal_parser import KinozalParser
@@ -26,7 +27,8 @@ __all__ = [
     'MagnettoAuthError', 'MagnettoCaptchaError', 'MagnettoParseError',
     'Category', 'Order', 'OrderBy', 'Year', 'Resolution', 'Source',
     'Registred', 'TypeRelease', 'Size',
-    'ResultParseSearchPage', 'transformParseError', 'BaseParser',
+    'ResultParseSearchPage', 'transformParseError', 'parse_size', 'parse_date',
+    'BaseParser',
     'RutrackerParser', 'KinozalParser',
     'CheckAuthMixin', 'CategoryFilterMixin', 'LastRequestMixin', 'BaseApi',
     'RutrackerApi', 'KinozalApi',
