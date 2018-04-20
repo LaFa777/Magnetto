@@ -1,25 +1,16 @@
 import magnetto
-from magnetto import (Category, OrderBy, Order, BaseApi, RutrackerParser,
+from magnetto import (OrderBy, Order, BaseApi, RutrackerParser,
                       MagnettoCaptchaError, MagnettoMisuseError,
                       MagnettoAuthError, MagnettoIncorrectСredentials,
-                      CheckAuthMixin, CategoryFilterMixin, LastRequestMixin)
+                      CheckAuthMixin, LastRequestMixin)
 from urllib.parse import quote_plus
 from grab.error import DataNotFound
 from grab import Grab
 
 
-class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin,
-                   LastRequestMixin):
+class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
     HOME = None
-
-    CATEGORIES = {
-        Category.FILMS: "1105,1165,124,1245,1246,1247,1248,1250,1390,140,1543,"
-        "1577,1642,1666,187,1900,194,1950,1991,208,209,2090,2091,2092,"
-        "2093,2198,2199,22,2200,2201,2221,2258,2339,2343,2365,2540,312,"
-        "313,33,376,4,404,484,505,521,539,7,709,893,921,922,923,924,925,"
-        "926,927,928,930,934,941"
-    }
 
     def __init__(self, grab=Grab()):
         self._grab = grab.clone()
@@ -140,9 +131,6 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin,
         # подготавливаем для запроса
         self._grab.setup(url=url)
 
-        # добавляем фильтр по категориям
-        self._add_category_filter(filters)
-
         # выполняем сам запрос
         self._grab.request()
 
@@ -153,10 +141,3 @@ class RutrackerApi(BaseApi, CheckAuthMixin, CategoryFilterMixin,
         searchItems = self._parser.parse_search(self._grab.doc)
 
         return searchItems[:limit]
-
-    def _handle_add_category_filter(self, args):
-        url = "{url}&f={param}".format(
-            url=self._grab.config["url"],
-            param=','.join(args)
-        )
-        self._grab.setup(url=url)
