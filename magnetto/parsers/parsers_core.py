@@ -61,15 +61,17 @@ def parse_date(str):
     return repr(time.mktime(unix))
 
 
-def parse_size(size_str):
-    size_parse = int(re.findall(r'[\d\.]+', size_str)[0])
+def parse_size(str):
+    size_str = re.findall(r'[\d\.]+', str)[0]
+    size_int = int(float(size_str))
     size_mb = 0
-    if "ГБ" in size_str or "GB" in size_str:
-        size_mb = size_parse * 1024
-    elif "МБ" in size_str or "MB" in size_str:
-        size_mb = size_parse
+    if "ГБ" in str or "GB" in str:
+        size_mb = size_int * 1024
+    elif "МБ" in str or "MB" in str:
+        size_mb = size_int
     # TODO: по умолчанию считать байтами?
     else:
-        raise MagnettoParseError("Invalid parse size_str(\"{}\")".format(size_str))
+        raise MagnettoParseError(
+            "Invalid parse size_str(\"{}\")".format(size_str))
 
-    return str(size_mb)
+    return repr(size_mb)
