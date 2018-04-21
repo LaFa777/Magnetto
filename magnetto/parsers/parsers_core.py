@@ -62,10 +62,10 @@ def parse_date(str):
 
 
 def parse_size(size_str):
-    size_parse = float(re.findall(r'[\d\.]+', size_str)[0])
+    size_parse = int(re.findall(r'[\d\.]+', size_str)[0])
     size_mb = 0
     if "ГБ" in size_str or "GB" in size_str:
-        size_mb = size_parse * 1024.0
+        size_mb = size_parse * 1024
     elif "МБ" in size_str or "MB" in size_str:
         size_mb = size_parse
     # TODO: по умолчанию считать байтами?
