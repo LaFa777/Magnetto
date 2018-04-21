@@ -5,7 +5,7 @@ from .errors import (MagnettoError, MagnettoMisuseError,
                      MagnettoCaptchaError, MagnettoParseError)
 
 from .filters import (Category, Order, OrderBy, Year, Resolution, Source,
-                      Registred, TypeRelease, Size)
+                      Registred, TypeRelease, Size, NoZeroSeeders)
 
 from .parsers.parsers_core import (ResultParseSearchPage, transformParseError,
                                    parse_size, parse_date)
@@ -26,7 +26,7 @@ __all__ = [
     'MagnettoError', 'MagnettoMisuseError', 'MagnettoIncorrectСredentials',
     'MagnettoAuthError', 'MagnettoCaptchaError', 'MagnettoParseError',
     'Category', 'Order', 'OrderBy', 'Year', 'Resolution', 'Source',
-    'Registred', 'TypeRelease', 'Size',
+    'Registred', 'TypeRelease', 'Size', 'NoZeroSeeders',
     'ResultParseSearchPage', 'transformParseError', 'parse_size', 'parse_date',
     'BaseParser',
     'RutrackerParser', 'KinozalParser',

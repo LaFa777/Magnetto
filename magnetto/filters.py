@@ -5,6 +5,7 @@ class Category(Enum):
     """Фильтр по категориям (если указанный фильтр не поддерживается трекером,
     то трекер не Выполняет поиск)
     """
+    UNDEFINED = 0
     FILMS = 1
     TV_SERIES = 2
     CARTOONS = 3
@@ -104,13 +105,15 @@ class Size(Enum):
         SMALL: 1.3ГБ - 2.2ГБ
         MEDIUM: 2.2ГБ - 4.0ГБ
         BIG: 4.0ГБ - 9.5ГБ
-        HUGE: 9.5ГБ и выше
+        LARGE: 9.5ГБ - 25ГБ
+        HUGE: 25ГБ и выше
     """
     TINY = 1
     SMALL = 2
     MEDIUM = 3
     BIG = 4
-    HUGE = 5
+    LARGE = 5
+    HUGE = 6
 
 
 class Year:
@@ -118,7 +121,13 @@ class Year:
     """
 
     def __init__(self, year):
-        self.year = year
+        self.year = str(year)
 
     def __str__(self):
-        return self.year
+        return str(self.year)
+
+
+class NoZeroSeeders:
+    """Фильтр исключает из конечной выборки раздачи с 0 сидерами
+    """
+    pass
