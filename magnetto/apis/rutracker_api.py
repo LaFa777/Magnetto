@@ -2,7 +2,8 @@ import magnetto
 from magnetto import (OrderBy, Order, BaseApi, RutrackerParser,
                       MagnettoCaptchaError, MagnettoMisuseError,
                       MagnettoAuthError, MagnettoIncorrectСredentials,
-                      CheckAuthMixin, LastRequestMixin)
+                      CheckAuthMixin, LastRequestMixin, Resolution, Source,
+                      Registred, Year, Size, NoZeroSeeders, Category)
 from urllib.parse import quote_plus
 from grab.error import DataNotFound
 from grab import Grab
@@ -75,23 +76,12 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
             raise MagnettoAuthError()
 
         RESULTS_ON_PAGE = 50
+
         # формируем урл для поиска
-        url = "{home}tracker.php?nm={name}&start={page}".format(
+        url = "{home}tracker.php?start={page}".format(
             home=self.HOME,
-            name=quote_plus(value),
             page=RESULTS_ON_PAGE * page
         )
-
-        # TODO:
-        # Выдавать торренты за интервал – параметр: tm
-        # Значения:
-        # -1 - за все время
-        # 1 - за сегодня
-        # 3 - последние 3 дня
-        # 7 - посл. неделю
-        # 14 - посл. 2 недели
-        # 32 - последний месяц
-        pass
 
         # Сортировать выдачу по:
         if Order.DESC in filters:
@@ -128,6 +118,56 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
         elif OrderBy.LAST_MESSAGE:
             url += "&o=8"
 
+        # Выбор качества
+        if Resolution.HD in filters:
+            value += " 720p"
+        elif Resolution.FULL_HD in filters:
+            value += " 1080p"
+        elif Resolution.ULTRA_HD in filters:
+            url += " 2160p"
+
+        # выбор формата
+        if Source.TV_RIP in filters:
+            rips = Source.TV_RIP.value.split(',')
+            value += ' | '.join(rips)
+        elif Source.WEB_DL_RIP in filters:
+            rips = Source.WEB_DL_RIP.value.split(',')
+            value += ' | '.join(rips)
+        elif Source.HD_RIP in filters:
+            rips = Source.HD_RIP.value.split(',')
+            value += ' | '.join(rips)
+        elif Source.BD_RIP in filters:
+            rips = Source.BD_RIP.value.split(',')
+            value += ' | '.join(rips)
+        elif Source.VHS_RIP in filters:
+            rips = Source.VHS_RIP.value.split(',')
+            value += ' | '.join(rips)
+        elif Source.DVD_RIP in filters:
+            rips = Source.DVD_RIP.value.split(',')
+            value += ' | '.join(rips)
+        elif Source.CAM_RIP in filters:
+            rips = Source.CAM_RIP.value.split(',')
+            value += ' | '.join(rips)
+
+        # Фильтр по дате регистрации раздачи
+        if Registred.TODAY in filters:
+            url += "&w=1"
+        elif Registred.YESTERDAY in filters:
+            url += "&w=2"
+        elif Registred.FOR_3_DAYS in filters:
+            url += "&w=3"
+        elif Registred.FOR_WEEK in filters:
+            url += "&w=4"
+        elif Registred.FOR_MONTH in filters:
+            url += "&w=5"
+
+        # добавляем год
+        for year in filters:
+            if year.__class__ == Year:
+                value += " " + str(year)
+
+        url += "&nm=" + quote_plus(value)
+
         # подготавливаем для запроса
         self._grab.setup(url=url)
 
@@ -138,6 +178,46 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
         self.is_logged()
 
         # разбор страницы
-        searchItems = self._parser.parse_search(self._grab.doc)
+        search_items = self._parser.parse_search(self._grab.doc)
 
-        return searchItems[:limit]
+        # устанавливваем фильтр по размеру
+        filter_size = None
+        if Size.TINY in filters:
+            filter_size = range(0, 1300)
+        elif Size.SMALL in filters:
+            filter_size = range(1300, 2250)
+        elif Size.MEDIUM in filters:
+            filter_size = range(2250, 4096)
+        elif Size.BIG in filters:
+            filter_size = range(4096, 9728)
+        elif Size.LARGE in filters:
+            filter_size = range(9728, 25600)
+        elif Size.HUGE in filters:
+            filter_size = range(25600, 9999999999)
+
+        # фильтруем по размеру
+        if filter_size:
+            tmp_arr = []
+            for item in search_items:
+                if int(item.size) in filter_size:
+                    tmp_arr.append(item)
+            search_items = tmp_arr
+
+        # удаляем раздачи без сидеров
+        if NoZeroSeeders in filters:
+            tmp_arr = []
+            for item in search_items:
+                if int(item.seeders) > 0:
+                    tmp_arr.append(item)
+            search_items = tmp_arr
+
+        # удаляем раздачи, не соответствующие категории
+        for filter in filters:
+            if filter in Category:
+                tmp_arr = []
+                for item in search_items:
+                    if item.category is filter:
+                        tmp_arr.append(item)
+                search_items = tmp_arr
+
+        return search_items[:limit]
