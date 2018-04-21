@@ -4,12 +4,15 @@ from magnetto import (BaseApi, Category,
                       MagnettoAuthError,
                       LastRequestMixin, OrderBy, Order, Year, Resolution,
                       Registred, TypeRelease, Size, Source, CheckAuthMixin,
-                      KinozalParser)
+                      KinozalParser,
+                      SizeFilterMixin, CategoryFilterMixin,
+                      NoZeroSeedersFilterMixin)
 from grab import Grab
 from urllib.parse import quote_plus
 
 
-class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
+class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
+                 CategoryFilterMixin, NoZeroSeedersFilterMixin):
 
     HOME = None
 
@@ -107,9 +110,9 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
             url += "&c=41"
 
         # проставляем год
-        for year in filters:
-            if year.__class__ == Year:
-                url += "&d=" + str(year.year)
+        for filter in filters:
+            if filter.__class__ == Year:
+                url += "&d=" + str(filter)
 
         # Выбор качества
         if Resolution.HD in filters and Resolution.FULL_HD in filters:
@@ -198,7 +201,7 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
             url += "&w=8"
         elif Size.BIG in filters:
             url += "&w=9"
-        elif Size.HUGE in filters:
+        elif Size.LARGE in filters:
             url += "&w=10"
 
         # добавляем возможно модифицированный поисковый запрос
@@ -214,6 +217,10 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
         self.is_logged()
 
         # разбор страницы
-        searchItems = self._parser.parse_search(self._grab.doc)
+        items = self._parser.parse_search(self._grab.doc)
 
-        return searchItems[:limit]
+        items = self.add_filter_size(items, filters)
+        items = self.add_filter_nozeroseeders(items, filters)
+        items = self.add_filter_category(items, filters)
+
+        return items[:limit]
