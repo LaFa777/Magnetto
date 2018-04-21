@@ -3,13 +3,15 @@ from magnetto import (OrderBy, Order, BaseApi, RutrackerParser,
                       MagnettoCaptchaError, MagnettoMisuseError,
                       MagnettoAuthError, MagnettoIncorrectСredentials,
                       CheckAuthMixin, LastRequestMixin, Resolution, Source,
-                      Registred, Year, Size, NoZeroSeeders, Category)
+                      Registred, Year, SizeFilterMixin, CategoryFilterMixin,
+                      NoZeroSeedersFilterMixin)
 from urllib.parse import quote_plus
 from grab.error import DataNotFound
 from grab import Grab
 
 
-class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
+class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
+                   NoZeroSeedersFilterMixin, CategoryFilterMixin):
 
     HOME = None
 
@@ -178,46 +180,10 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
         self.is_logged()
 
         # разбор страницы
-        search_items = self._parser.parse_search(self._grab.doc)
+        items = self._parser.parse_search(self._grab.doc)
 
-        # устанавливваем фильтр по размеру
-        filter_size = None
-        if Size.TINY in filters:
-            filter_size = range(0, 1300)
-        elif Size.SMALL in filters:
-            filter_size = range(1300, 2250)
-        elif Size.MEDIUM in filters:
-            filter_size = range(2250, 4096)
-        elif Size.BIG in filters:
-            filter_size = range(4096, 9728)
-        elif Size.LARGE in filters:
-            filter_size = range(9728, 25600)
-        elif Size.HUGE in filters:
-            filter_size = range(25600, 9999999999)
+        items = self.add_filter_size(items, filters)
+        items = self.add_filter_nozeroseeders(items, filters)
+        items = self.add_filter_category(items, filters)
 
-        # фильтруем по размеру
-        if filter_size:
-            tmp_arr = []
-            for item in search_items:
-                if int(item.size) in filter_size:
-                    tmp_arr.append(item)
-            search_items = tmp_arr
-
-        # удаляем раздачи без сидеров
-        if NoZeroSeeders in filters:
-            tmp_arr = []
-            for item in search_items:
-                if int(item.seeders) > 0:
-                    tmp_arr.append(item)
-            search_items = tmp_arr
-
-        # удаляем раздачи, не соответствующие категории
-        for filter in filters:
-            if filter in Category:
-                tmp_arr = []
-                for item in search_items:
-                    if item.category is filter:
-                        tmp_arr.append(item)
-                search_items = tmp_arr
-
-        return search_items[:limit]
+        return items[:limit]
