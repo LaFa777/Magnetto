@@ -31,7 +31,7 @@ class KinozalParser(BaseParser):
                 magnet=""
             )
             result_items.append(item)
-        return tuple(result_items)
+        return result_items
 
     @transformParseError
     def parse_topic(self, doc):
