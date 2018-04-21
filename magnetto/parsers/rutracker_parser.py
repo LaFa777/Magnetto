@@ -10,7 +10,6 @@ class RutrackerParser(BaseParser):
     def __init__(self):
         self.HOME = magnetto.RUTRACKER_URL
 
-        # получаем индекс нашего элемента в дереве
     def parse_category(self, doc):
         """Возвращает элемент Category, соответствующий данному элементу
         поиска
@@ -45,9 +44,18 @@ class RutrackerParser(BaseParser):
         elif "кино" in category["root_forum"].lower() or \
                 "Video" in category["root_forum"]:
             return Category.FILMS
-        elif "сериалы" in category["root_forum"].lower():
+        elif "сериалы" in category["root"].lower():
             return Category.TV_SERIES
-        # TODO: добавить остальные
+        elif "книги" in category["root"].lower():
+            return Category.BOOKS
+        elif "аудиокниги" in category["root"].lower():
+            return Category.AUDIOBOOKS
+        elif "музыка" in category["root"].lower():
+            return Category.MUSICS
+        elif "игры" in category["root"].lower():
+            return Category.GAMES
+        elif "программы" in category["root"].lower():
+            return Category.PROGRAMS
         else:
             return Category.UNDEFINED
 
@@ -69,7 +77,7 @@ class RutrackerParser(BaseParser):
                 downloads=tr.xpath('td[9]/text()')[0],
                 created=tr.xpath('td[10]/u/text()')[0],
                 torrent=self.HOME + "dl.php?t=" + str(topic_id),
-                magnet=""  # TODO:
+                magnet=""
             )
             result_items.append(item)
         return result_items
