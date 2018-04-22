@@ -4,19 +4,23 @@ from magnetto import (OrderBy, Order, BaseApi, RutrackerParser,
                       MagnettoAuthError, MagnettoIncorrectСredentials,
                       CheckAuthMixin, LastRequestMixin, Resolution, Source,
                       Registred, Year, SizeFilterMixin, CategoryFilterMixin,
-                      NoZeroSeedersFilterMixin, NoWordsFilterMixin)
+                      NoZeroSeedersFilterMixin, NoWordsFilterMixin,
+                      RegistredFilterMixin, NoEqualSizeFilterMixin)
 from urllib.parse import quote_plus
 from grab.error import DataNotFound
 from grab import Grab
 
 
 class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
-                   NoZeroSeedersFilterMixin, CategoryFilterMixin, NoWordsFilterMixin):
+                   NoZeroSeedersFilterMixin, CategoryFilterMixin,
+                   NoWordsFilterMixin, RegistredFilterMixin,
+                   NoEqualSizeFilterMixin):
 
     HOME = None
 
     def __init__(self, grab=Grab()):
-        self._grab = grab.clone()
+        #self._grab = grab.clone()
+        self._grab = grab
         self._parser = RutrackerParser()
         self._login = ""
         self._password = ""
@@ -121,47 +125,14 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
             url += "&o=8"
 
         # Выбор качества
-        if Resolution.HD in filters:
-            value += " 720p"
-        elif Resolution.FULL_HD in filters:
-            value += " 1080p"
-        elif Resolution.ULTRA_HD in filters:
-            url += " 2160p"
+        for filter in filters:
+            if type(filter) is Resolution:
+                value += " " + filter.value
 
         # выбор формата
-        if Source.TV_RIP in filters:
-            rips = Source.TV_RIP.value.split(',')
-            value += ' | '.join(rips)
-        elif Source.WEB_DL_RIP in filters:
-            rips = Source.WEB_DL_RIP.value.split(',')
-            value += ' | '.join(rips)
-        elif Source.HD_RIP in filters:
-            rips = Source.HD_RIP.value.split(',')
-            value += ' | '.join(rips)
-        elif Source.BD_RIP in filters:
-            rips = Source.BD_RIP.value.split(',')
-            value += ' | '.join(rips)
-        elif Source.VHS_RIP in filters:
-            rips = Source.VHS_RIP.value.split(',')
-            value += ' | '.join(rips)
-        elif Source.DVD_RIP in filters:
-            rips = Source.DVD_RIP.value.split(',')
-            value += ' | '.join(rips)
-        elif Source.CAM_RIP in filters:
-            rips = Source.CAM_RIP.value.split(',')
-            value += ' | '.join(rips)
-
-        # Фильтр по дате регистрации раздачи
-        if Registred.TODAY in filters:
-            url += "&w=1"
-        elif Registred.YESTERDAY in filters:
-            url += "&w=2"
-        elif Registred.FOR_3_DAYS in filters:
-            url += "&w=3"
-        elif Registred.FOR_WEEK in filters:
-            url += "&w=4"
-        elif Registred.FOR_MONTH in filters:
-            url += "&w=5"
+        for filter in filters:
+            if type(filter) is Source:
+                value += ' ' + filter.value.replace(',', ' | ')
 
         # добавляем год
         for year in filters:
@@ -186,5 +157,7 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
         items = self.add_filter_nozeroseeders(items, filters)
         items = self.add_filter_category(items, filters)
         items = self.add_filter_nowords(items, filters)
+        items = self.add_filter_registred(items, filters)
+        items = self.add_filter_noequalsize(items, filters)
 
         return items[:limit]
