@@ -6,13 +6,13 @@ from magnetto import (BaseApi, Category,
                       Registred, TypeRelease, Size, Source, CheckAuthMixin,
                       KinozalParser,
                       SizeFilterMixin, CategoryFilterMixin,
-                      NoZeroSeedersFilterMixin)
+                      NoZeroSeedersFilterMixin, NoWordsFilterMixin)
 from grab import Grab
 from urllib.parse import quote_plus
 
 
 class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
-                 CategoryFilterMixin, NoZeroSeedersFilterMixin):
+                 CategoryFilterMixin, NoZeroSeedersFilterMixin, NoWordsFilterMixin):
 
     HOME = None
 
@@ -111,7 +111,7 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
 
         # проставляем год
         for filter in filters:
-            if filter.__class__ == Year:
+            if type(filter) is Year:
                 url += "&d=" + str(filter)
 
         # Выбор качества
@@ -222,5 +222,6 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
         items = self.add_filter_size(items, filters)
         items = self.add_filter_nozeroseeders(items, filters)
         items = self.add_filter_category(items, filters)
+        items = self.add_filter_nowords(items, filters)
 
         return items[:limit]

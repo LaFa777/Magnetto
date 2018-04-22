@@ -131,3 +131,18 @@ class NoZeroSeeders:
     """Фильтр исключает из конечной выборки раздачи с 0 сидерами
     """
     pass
+
+
+class NoWords:
+    """Фильтр исключает из конечной выборки раздачи данными словами
+    """
+
+    def __init__(self, *argv):
+        self.argv = []
+        for arg in argv:
+            self.argv.append(arg.lower())
+
+    def __contains__(self, str):
+        for arg in self.argv:
+            if arg in str.lower():
+                return True

@@ -1,6 +1,6 @@
 """Различные примеси для объектов типа :obj:`magnetto.BaseApi`"""
 
-from magnetto import MagnettoAuthError, Size, NoZeroSeeders, Category
+from magnetto import MagnettoAuthError, Size, NoZeroSeeders, Category, NoWords
 
 
 class LastRequestMixin(object):
@@ -97,6 +97,22 @@ class CategoryFilterMixin:
                 tmp_arr = []
                 for item in items:
                     if item.category is filter:
+                        tmp_arr.append(item)
+                return tmp_arr
+        else:
+            return items
+
+
+class NoWordsFilterMixin:
+
+    def add_filter_nowords(self, items, filters):
+        """Удаляет раздачи, содержащие указанные в фильтре слова
+        """
+        for filter in filters:
+            if type(filter) is NoWords:
+                tmp_arr = []
+                for item in items:
+                    if item.name not in filter:
                         tmp_arr.append(item)
                 return tmp_arr
         else:

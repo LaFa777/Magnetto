@@ -4,14 +4,14 @@ from magnetto import (OrderBy, Order, BaseApi, RutrackerParser,
                       MagnettoAuthError, MagnettoIncorrectСredentials,
                       CheckAuthMixin, LastRequestMixin, Resolution, Source,
                       Registred, Year, SizeFilterMixin, CategoryFilterMixin,
-                      NoZeroSeedersFilterMixin)
+                      NoZeroSeedersFilterMixin, NoWordsFilterMixin)
 from urllib.parse import quote_plus
 from grab.error import DataNotFound
 from grab import Grab
 
 
 class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
-                   NoZeroSeedersFilterMixin, CategoryFilterMixin):
+                   NoZeroSeedersFilterMixin, CategoryFilterMixin, NoWordsFilterMixin):
 
     HOME = None
 
@@ -165,7 +165,7 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
 
         # добавляем год
         for year in filters:
-            if year.__class__ == Year:
+            if type(year) is Year:
                 value += " " + str(year)
 
         url += "&nm=" + quote_plus(value)
@@ -185,5 +185,6 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
         items = self.add_filter_size(items, filters)
         items = self.add_filter_nozeroseeders(items, filters)
         items = self.add_filter_category(items, filters)
+        items = self.add_filter_nowords(items, filters)
 
         return items[:limit]
