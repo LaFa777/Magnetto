@@ -5,7 +5,8 @@ from .errors import (MagnettoError, MagnettoMisuseError,
                      MagnettoCaptchaError, MagnettoParseError)
 
 from .filters import (Category, Order, OrderBy, Year, Resolution, Source,
-                      Registred, TypeRelease, Size, NoZeroSeeders, NoWords)
+                      Registred, TypeRelease, Size, NoZeroSeeders, NoWords,
+                      NoEqualSize)
 
 from .parsers.parsers_core import (ResultParseSearchPage, transformParseError,
                                    parse_size, parse_date)
@@ -15,7 +16,8 @@ from .parsers.kinozal_parser import KinozalParser
 
 from .apis.api_mixins import (CheckAuthMixin, CategoryFilterMixin,
                               LastRequestMixin, SizeFilterMixin,
-                              NoZeroSeedersFilterMixin, NoWordsFilterMixin)
+                              NoZeroSeedersFilterMixin, NoWordsFilterMixin,
+                              RegistredFilterMixin, NoEqualSizeFilterMixin)
 from .apis.base_api import BaseApi
 from .apis.rutracker_api import RutrackerApi
 from .apis.kinozal_api import KinozalApi
@@ -31,6 +33,7 @@ __all__ = [
     'ResultParseSearchPage', 'transformParseError', 'parse_size', 'parse_date',
     'BaseParser', 'RutrackerParser', 'KinozalParser', 'CheckAuthMixin',
     'CategoryFilterMixin', 'SizeFilterMixin', 'NoZeroSeedersFilterMixin',
-    'LastRequestMixin', 'NoWordsFilterMixin', 'BaseApi', 'RutrackerApi',
-    'KinozalApi', 'ApiDispatcher'
+    'LastRequestMixin', 'NoWordsFilterMixin', 'RegistredFilterMixin',
+    'NoEqualSizeFilterMixin', 'BaseApi', 'RutrackerApi', 'KinozalApi',
+    'ApiDispatcher', 'NoEqualSize'
 ]

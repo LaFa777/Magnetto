@@ -1,4 +1,5 @@
 from enum import Enum
+from magnetto import MagnettoMisuseError
 
 
 class Category(Enum):
@@ -24,9 +25,9 @@ class Resolution(Enum):
         FULLHD: 1080p
         ULTRA_HD: 4k
     """
-    HD = 1
-    FULL_HD = 2
-    ULTRA_HD = 3
+    HD = "720p"
+    FULL_HD = "1080p"
+    ULTRA_HD = "2160p"
 
 
 class Source(Enum):
@@ -138,6 +139,10 @@ class NoWords:
     """
 
     def __init__(self, *argv):
+        """
+        Attributes:
+            argv (List[str]): Слова для исключения из выдачи
+        """
         self.argv = []
         for arg in argv:
             self.argv.append(arg.lower())
@@ -146,3 +151,22 @@ class NoWords:
         for arg in self.argv:
             if arg in str.lower():
                 return True
+
+
+class NoEqualSize:
+    """Исключение раздач с одинаковым размером. По умолчанию разрешается
+    расхождение в размере не более 10%.
+    """
+
+    def __init__(self, size=10):
+        """
+        Attributes:
+            size (int): Допустимый процент разброса по размеру
+        """
+        if size <= 0 or size >= 100:
+            raise MagnettoMisuseError("Arg must be int (0 < x < 100)")
+
+        self.size = size
+
+    def __int__(self):
+        return int(self.size)
