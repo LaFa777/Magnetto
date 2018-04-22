@@ -1,6 +1,8 @@
 """Различные примеси для объектов типа :obj:`magnetto.BaseApi`"""
 
-from magnetto import MagnettoAuthError, Size, NoZeroSeeders, Category, NoWords
+import time
+from magnetto import (MagnettoAuthError, Size, NoZeroSeeders, Category, NoWords,
+                      Registred, NoEqualSize)
 
 
 class LastRequestMixin(object):
@@ -99,8 +101,7 @@ class CategoryFilterMixin:
                     if item.category is filter:
                         tmp_arr.append(item)
                 return tmp_arr
-        else:
-            return items
+        return items
 
 
 class NoWordsFilterMixin:
@@ -115,5 +116,67 @@ class NoWordsFilterMixin:
                     if item.name not in filter:
                         tmp_arr.append(item)
                 return tmp_arr
-        else:
+        return items
+
+
+class RegistredFilterMixin:
+
+    def add_filter_registred(self, items, filters):
+        """Фильтр по дате регистрации раздачи
+        """
+        current_time = int(time.time())
+        filter_time = None
+
+        if Registred.TODAY in filters:
+            filter_time = 60 * 60 * 24
+        elif Registred.YESTERDAY in filters:
+            filter_time = 60 * 60 * 24 * 2
+        elif Registred.FOR_3_DAYS in filters:
+            filter_time = 60 * 60 * 24 * 3
+        elif Registred.FOR_WEEK in filters:
+            filter_time = 60 * 60 * 24 * 7
+        elif Registred.FOR_MONTH in filters:
+            filter_time = 60 * 60 * 24 * 32
+
+        if not filter_time:
             return items
+
+        tmp_arr = []
+        for item in items:
+            if int(item.created) >= (current_time - filter_time):
+                tmp_arr.append(item)
+        return tmp_arr
+
+
+class NoEqualSizeFilterMixin:
+
+    def add_filter_noequalsize(self, items, filters):
+        for filter in filters:
+            # можно передавать в фильтр просто класс
+            if filter is NoEqualSize:
+                filter = NoEqualSize()
+
+            if type(filter) is NoEqualSize:
+                # сначала необходимо отсортировать items по размеру
+                sort_arr = sorted(items, key=lambda item: int(item.size))
+
+                # составляем список раздач не совпадающих по размеру
+                # менее чем на filter процент
+                tmp_arr = []
+                for i, item in enumerate(sort_arr[:-1]):
+                    next_size = int(sort_arr[i+1].size)
+                    current_size = int(item.size)
+                    # если размер текущей раздачи составляет менее filter
+                    # процента от размера следующей раздачи, то удаляем
+                    if (100-(current_size/next_size*100)) > int(filter):
+                        tmp_arr.append(item)
+                # т.к. прошли по всем, кроме последнего, то добавляем и его
+                tmp_arr.append(sort_arr[len(sort_arr)-1])
+
+                # удаляем из items все раздачи, которые не попали под фильтр
+                result_arr = []
+                for item in items:
+                    if item in tmp_arr:
+                        result_arr.append(item)
+                return result_arr
+        return items
