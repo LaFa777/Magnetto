@@ -64,18 +64,18 @@ class RutrackerParser(BaseParser):
         result_items = []
         for tr in doc.tree.xpath('//table[@id="tor-tbl"]/tbody/tr'):
             topic_id = tr.xpath('td[4]/div/a/@data-topic_id')[0]
-            size_int = int(tr.xpath('td[6]/u/text()')[0])
+            size_int = int(tr.xpath('td[6]/u')[0].text)
             category = self.parse_category(tr)
             item = ResultParseSearchPage(
                 id=topic_id,
                 category=category,
-                name=tr.xpath('td[4]/div/a/text()')[0],
+                name=tr.xpath('td[4]/div/a')[0].text,
                 url=self.HOME + "viewtopic.php?t=" + str(topic_id),
                 size=str(int(size_int/1024/1024)),
-                seeders=tr.xpath('td[7]/u/text()')[0],
-                leechers=tr.xpath('td[8]/b/text()')[0],
-                downloads=tr.xpath('td[9]/text()')[0],
-                created=tr.xpath('td[10]/u/text()')[0],
+                seeders=tr.xpath('td[7]/u')[0].text or '0',
+                leechers=tr.xpath('td[8]/b')[0].text or '0',
+                downloads=tr.xpath('td[9]')[0].text or '0',
+                created=tr.xpath('td[10]/u')[0].text or -1,
                 torrent=self.HOME + "dl.php?t=" + str(topic_id),
                 magnet=""
             )
