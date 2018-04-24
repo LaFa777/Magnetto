@@ -1,14 +1,18 @@
-import magnetto
-from magnetto import (OrderBy, Order, BaseApi, RutrackerParser,
-                      MagnettoCaptchaError, MagnettoMisuseError,
-                      MagnettoAuthError, MagnettoIncorrectСredentials,
-                      CheckAuthMixin, LastRequestMixin, Resolution, Source,
-                      Registred, Year, SizeFilterMixin, CategoryFilterMixin,
-                      NoZeroSeedersFilterMixin, NoWordsFilterMixin,
-                      RegistredFilterMixin, NoEqualSizeFilterMixin)
 from urllib.parse import quote_plus
-from grab.error import DataNotFound
+
 from grab import Grab
+from grab.error import DataNotFound
+
+import magnetto
+from magnetto.errors import (MagnettoCaptchaError, MagnettoMisuseError,
+                             MagnettoAuthError, MagnettoIncorrectСredentials)
+from magnetto.filters import (OrderBy, Order, Resolution, Source, Year)
+from magnetto.apis import BaseApi
+from magnetto.apis.mixins import (CheckAuthMixin, LastRequestMixin,
+                                  SizeFilterMixin, CategoryFilterMixin,
+                                  NoZeroSeedersFilterMixin, NoWordsFilterMixin,
+                                  RegistredFilterMixin, NoEqualSizeFilterMixin)
+from magnetto.parsers import RutrackerParser
 
 
 class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
@@ -19,8 +23,7 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
     HOME = None
 
     def __init__(self, grab=Grab()):
-        #self._grab = grab.clone()
-        self._grab = grab
+        self._grab = grab.clone()
         self._parser = RutrackerParser()
         self._login = ""
         self._password = ""

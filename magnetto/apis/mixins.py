@@ -1,8 +1,10 @@
 """Различные примеси для объектов типа :obj:`magnetto.BaseApi`"""
 
 import time
-from magnetto import (MagnettoAuthError, Size, NoZeroSeeders, Category, NoWords,
-                      Registred, NoEqualSize)
+
+from magnetto.errors import MagnettoAuthError
+from magnetto.filters import (Size, NoZeroSeeders, Category, NoWords,
+                              Registred, NoEqualSize)
 
 
 class LastRequestMixin(object):

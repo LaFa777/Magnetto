@@ -1,7 +1,7 @@
 import re
 import time
 from collections import namedtuple
-from magnetto import MagnettoParseError
+from magnetto.errors import MagnettoParseError
 from grab.error import DataNotFound
 
 ResultParseSearchPage = namedtuple("ResultParseSearchPage", [

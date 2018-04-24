@@ -1,7 +1,8 @@
 import re
 import magnetto
-from magnetto import (BaseParser, transformParseError, ResultParseSearchPage,
-                      parse_size, parse_date, Category)
+from magnetto.filters import Category
+from magnetto.parsers import (BaseParser, transformParseError, ResultParseSearchPage,
+                              parse_size, parse_date,)
 
 
 class KinozalParser(BaseParser):
@@ -16,7 +17,7 @@ class KinozalParser(BaseParser):
         """
         img_src = doc.xpath('td[1]/img/@src')[0]
 
-        num = re.findall("([0-9]+)\.gif", img_src)[0]
+        num = re.findall(r'([0-9]+)\.gif', img_src)[0]
         if num in "6,7,8,9,10,11,12,13,14,15,16,17,18,24,33,35,36,39,47,49,50":
             return Category.FILMS
         elif num in "45,46":

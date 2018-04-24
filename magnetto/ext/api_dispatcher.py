@@ -1,5 +1,8 @@
 from grab import Grab
-from magnetto import (Order, OrderBy, BaseApi, MagnettoCaptchaError)
+
+from magnetto.apis import BaseApi
+from magnetto.errors import MagnettoCaptchaError
+from magnetto.filters import Order, OrderBy
 
 
 class ApiDispatcher(object):

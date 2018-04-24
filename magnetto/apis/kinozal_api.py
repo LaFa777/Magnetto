@@ -1,14 +1,17 @@
-import magnetto
-from magnetto import (BaseApi, Category,
-                      MagnettoIncorrectСredentials, MagnettoMisuseError,
-                      MagnettoAuthError,
-                      LastRequestMixin, OrderBy, Order, Year, Resolution,
-                      Registred, TypeRelease, Size, Source, CheckAuthMixin,
-                      KinozalParser,
-                      SizeFilterMixin, CategoryFilterMixin,
-                      NoZeroSeedersFilterMixin, NoWordsFilterMixin)
-from grab import Grab
 from urllib.parse import quote_plus
+
+from grab import Grab
+
+import magnetto
+from magnetto.errors import (MagnettoIncorrectСredentials, MagnettoMisuseError,
+                             MagnettoAuthError)
+from magnetto.filters import (Category, OrderBy, Order, Year, Resolution,
+                              Registred, TypeRelease, Size, Source)
+from magnetto.apis.mixins import (LastRequestMixin, SizeFilterMixin,
+                                  CheckAuthMixin, CategoryFilterMixin,
+                                  NoZeroSeedersFilterMixin, NoWordsFilterMixin)
+from magnetto.apis import BaseApi
+from magnetto.parsers import KinozalParser
 
 
 class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,

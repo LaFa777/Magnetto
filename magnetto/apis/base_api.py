@@ -1,6 +1,7 @@
 from abc import ABC, abstractproperty, abstractmethod
 from grab import Grab
-from magnetto import (OrderBy, Order)
+# TODO: убрать(добавить миксин)
+from magnetto.filters import OrderBy, Order
 
 
 class BaseApi(ABC):

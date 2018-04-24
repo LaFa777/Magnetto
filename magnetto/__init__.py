@@ -8,16 +8,16 @@ from .filters import (Category, Order, OrderBy, Year, Resolution, Source,
                       Registred, TypeRelease, Size, NoZeroSeeders, NoWords,
                       NoEqualSize)
 
-from .parsers.parsers_core import (ResultParseSearchPage, transformParseError,
-                                   parse_size, parse_date)
+from .parsers.core import ResultParseSearchPage, transformParseError
+
 from .parsers.base_parser import BaseParser
 from .parsers.rutracker_parser import RutrackerParser
 from .parsers.kinozal_parser import KinozalParser
 
-from .apis.api_mixins import (CheckAuthMixin, CategoryFilterMixin,
-                              LastRequestMixin, SizeFilterMixin,
-                              NoZeroSeedersFilterMixin, NoWordsFilterMixin,
-                              RegistredFilterMixin, NoEqualSizeFilterMixin)
+from .apis.mixins import (CheckAuthMixin, CategoryFilterMixin,
+                          LastRequestMixin, SizeFilterMixin,
+                          NoZeroSeedersFilterMixin, NoWordsFilterMixin,
+                          RegistredFilterMixin, NoEqualSizeFilterMixin)
 from .apis.base_api import BaseApi
 from .apis.rutracker_api import RutrackerApi
 from .apis.kinozal_api import KinozalApi

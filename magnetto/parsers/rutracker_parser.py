@@ -1,6 +1,7 @@
 import magnetto
-from magnetto import (BaseParser, transformParseError, ResultParseSearchPage,
-                      Category)
+from magnetto.filters import Category
+from magnetto.parsers import (BaseParser, transformParseError,
+                              ResultParseSearchPage)
 
 
 class RutrackerParser(BaseParser):
