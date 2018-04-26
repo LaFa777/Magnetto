@@ -77,7 +77,7 @@ class OrderBy(Enum):
     VIEWS = 9
 
 
-class Registred(Enum):
+class Registered(Enum):
     """Дата регистрации раздачи
     """
     TODAY = 1

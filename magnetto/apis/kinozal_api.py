@@ -6,7 +6,7 @@ import magnetto
 from magnetto.errors import (MagnettoIncorrectСredentials, MagnettoMisuseError,
                              MagnettoAuthError)
 from magnetto.filters import (Category, OrderBy, Order, Year, Resolution,
-                              Registred, TypeRelease, Size, Source)
+                              Registered, TypeRelease, Size, Source)
 from magnetto.apis.core import api_filters_method
 from magnetto.apis.mixins import LastRequestMixin, CheckAuthMixin
 from magnetto.apis import BaseApi
@@ -104,11 +104,11 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
             OrderBy.SIZE: ['&t=3', ''],
             OrderBy.LAST_MESSAGE: ['&t=6', ''],
 
-            Registred.TODAY: ['&w=1', ''],
-            Registred.YESTERDAY: ['&w=2', ''],
-            Registred.FOR_3_DAYS: ['&w=3', ''],
-            Registred.FOR_WEEK: ['&w=4', ''],
-            Registred.FOR_MONTH: ['&w=5', ''],
+            Registered.TODAY: ['&w=1', ''],
+            Registered.YESTERDAY: ['&w=2', ''],
+            Registered.FOR_3_DAYS: ['&w=3', ''],
+            Registered.FOR_WEEK: ['&w=4', ''],
+            Registered.FOR_MONTH: ['&w=5', ''],
 
             TypeRelease.SILVER: ['&w=12', ''],
             TypeRelease.GOLD: ['&w=11', ''],

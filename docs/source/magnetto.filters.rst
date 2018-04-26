@@ -11,7 +11,7 @@ magnetto.filters
   magnetto.filters.noequalsize
   magnetto.filters.nowords
   magnetto.filters.nozeroseeders
-  magnetto.filters.registred
+  magnetto.filters.registered
   magnetto.filters.resolution
   magnetto.filters.size
   magnetto.filters.source
