@@ -1,5 +1,5 @@
-magnetto.BaseApi
-================
+magnetto.apis.BaseApi
+=====================
 
 .. autoclass:: magnetto.BaseApi
     :members:

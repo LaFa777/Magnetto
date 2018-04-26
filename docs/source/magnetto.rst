@@ -3,7 +3,8 @@ magnetto module
 
 .. toctree::
 
-    magnetto.core
+    magnetto.errors
+    magnetto.filters
     magnetto.parsers
     magnetto.apis
     magnetto.ext

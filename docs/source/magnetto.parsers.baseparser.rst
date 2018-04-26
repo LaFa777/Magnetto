@@ -1,5 +1,5 @@
-magnetto.BaseParser
-===================
+magnetto.parsers.BaseParser
+===========================
 
 .. autoclass:: magnetto.BaseParser
     :members:

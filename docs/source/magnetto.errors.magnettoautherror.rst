@@ -1,5 +1,5 @@
-magnetto.MagnettoAuthError
-==========================
+magnetto.errors.MagnettoAuthError
+=================================
 
 .. autoclass:: magnetto.MagnettoAuthError
     :members:

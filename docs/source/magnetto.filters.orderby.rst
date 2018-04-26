@@ -1,5 +1,5 @@
-magnetto.OrderBy
-================
+magnetto.filters.OrderBy
+========================
 
 .. autoclass:: magnetto.OrderBy
     :members:

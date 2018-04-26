@@ -1,6 +1,6 @@
-magnetto.RutrackerApi
+magnetto.filters.Size
 =====================
 
-.. autoclass:: magnetto.RutrackerApi
+.. autoclass:: magnetto.Size
     :members:
     :show-inheritance:

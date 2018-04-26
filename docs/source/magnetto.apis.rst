@@ -1,8 +1,10 @@
-Апишки
-======
+magnetto.apis
+=============
 
 .. toctree::
 
-  magnetto.baseapi
-  magnetto.rutrackerapi
-  magnetto.apimixins
+  magnetto.apis.core
+  magnetto.apis.mixins
+  magnetto.apis.baseapi
+  magnetto.apis.rutrackerapi
+  magnetto.apis.kinozalapi

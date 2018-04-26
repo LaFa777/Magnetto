@@ -1,5 +1,5 @@
-magnetto.MagnettoCaptchaError
-=============================
+magnetto.errors.MagnettoCaptchaError
+====================================
 
 .. autoclass:: magnetto.MagnettoCaptchaError
     :members:

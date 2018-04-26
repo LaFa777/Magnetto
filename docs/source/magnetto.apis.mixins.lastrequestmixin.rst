@@ -1,5 +1,5 @@
-magnetto.LastRequestMixin
-=========================
+magnetto.apis.mixins.LastRequestMixin
+=====================================
 
 .. autoclass:: magnetto.LastRequestMixin
     :members:

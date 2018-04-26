@@ -1,5 +1,5 @@
-magnetto.ApiDispatcher
-======================
+magnetto.ext.ApiDispatcher
+==========================
 
 .. autoclass:: magnetto.ApiDispatcher
     :members:

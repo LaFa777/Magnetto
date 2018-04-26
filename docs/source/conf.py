@@ -195,6 +195,6 @@ todo_include_todos = True
 
 # -- Options for napoleon extension ------------------------------------------
 # http://www.sphinx-doc.org/en/stable/ext/napoleon.html
-#napoleon_google_docstring = True
-#napoleon_use_param = False
+# napoleon_google_docstring = True
+# napoleon_use_param = False
 # napoleon_use_ivar = True

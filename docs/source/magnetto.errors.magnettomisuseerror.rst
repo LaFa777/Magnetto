@@ -1,5 +1,5 @@
-magnetto.MagnettoMisuseError
-============================
+magnetto.errors.MagnettoMisuseError
+===================================
 
 .. autoclass:: magnetto.MagnettoMisuseError
     :members:

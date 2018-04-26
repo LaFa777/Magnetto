@@ -1,5 +1,5 @@
-magnetto.RutrackerParser
-========================
+magnetto.parsers.RutrackerParser
+================================
 
 .. autoclass:: magnetto.RutrackerParser
     :members:

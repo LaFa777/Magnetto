@@ -1,5 +1,5 @@
-magnetto.MagnettoIncorrectСredentials
-=====================================
+magnetto.errors.MagnettoIncorrectСredentials
+============================================
 
 .. autoclass:: magnetto.MagnettoIncorrectСredentials
     :members:

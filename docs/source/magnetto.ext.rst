@@ -1,6 +1,6 @@
-Расширения
-==========
+magnetto.ext
+============
 
 .. toctree::
 
-  magnetto.apidispatcher
+  magnetto.ext.apidispatcher

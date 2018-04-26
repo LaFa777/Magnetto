@@ -1,11 +1,11 @@
-Исключения
-==========
+magnetto.errors
+===============
 
 .. toctree::
 
-  magnetto.magnettoerror
-  magnetto.magnettomisuseerror
-  magnetto.magnettoincorrectcredentials
-  magnetto.magnettoautherror
-  magnetto.magnettocaptchaerror
-  magnetto.magnettoparseerror
+  magnetto.errors.magnettoerror
+  magnetto.errors.magnettomisuseerror
+  magnetto.errors.magnettoincorrectcredentials
+  magnetto.errors.magnettoautherror
+  magnetto.errors.magnettocaptchaerror
+  magnetto.errors.magnettoparseerror
