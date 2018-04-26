@@ -3,7 +3,7 @@ import time
 from magnetto.errors import MagnettoMisuseError
 from magnetto.apis.core import GlobalFilters
 from magnetto.filters import (Size, NoZeroSeeders, Category, NoWords,
-                              Registred, NoEqualSize)
+                              Registered, NoEqualSize)
 
 
 # TODO: добавить Order, OrderBy
@@ -85,7 +85,7 @@ def handler_filter_nowords(items, filter):
 GlobalFilters.append(NoWords, handler_filter_nowords)
 
 
-def handler_filter_registred(items, filter):
+def handler_filter_registered(items, filter):
     """Фильтр по дате регистрации раздачи
     """
     current_time = int(float(time.time()))
@@ -94,15 +94,15 @@ def handler_filter_registred(items, filter):
     HOUR = 60 * 60
     DAY = HOUR * 24
 
-    if Registred.TODAY is filter:
+    if Registered.TODAY is filter:
         filter_time = DAY
-    elif Registred.YESTERDAY is filter:
+    elif Registered.YESTERDAY is filter:
         filter_time = DAY * 2
-    elif Registred.FOR_3_DAYS is filter:
+    elif Registered.FOR_3_DAYS is filter:
         filter_time = DAY * 3
-    elif Registred.FOR_WEEK is filter:
+    elif Registered.FOR_WEEK is filter:
         filter_time = DAY * 7
-    elif Registred.FOR_MONTH is filter:
+    elif Registered.FOR_MONTH is filter:
         filter_time = DAY * 32
 
     if not filter_time:
@@ -115,7 +115,7 @@ def handler_filter_registred(items, filter):
     return tmp_arr
 
 
-GlobalFilters.append(Registred, handler_filter_registred)
+GlobalFilters.append(Registered, handler_filter_registered)
 
 
 def handler_filter_noequalsize(items, filter):

@@ -20,7 +20,7 @@ def build_data(time):
 HOUR = 60 * 60
 DAY = HOUR * 24
 
-mock_registred_1 = (
+mock_registered_1 = (
     build_data(time() - HOUR),  # TODAY
     build_data(time() - DAY * 2 + HOUR),  # YESTERDAY
     build_data(time() - DAY * 3 + HOUR),  # FOR_3_DAYS
