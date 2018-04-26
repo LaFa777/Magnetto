@@ -6,7 +6,8 @@ from grab.error import DataNotFound
 import magnetto
 from magnetto.errors import (MagnettoCaptchaError, MagnettoMisuseError,
                              MagnettoAuthError, MagnettoIncorrectСredentials)
-from magnetto.filters import OrderBy, Order, Resolution, Source, Year
+from magnetto.filters import (OrderBy, Order, Resolution, Source, Year,
+                              NoWords, NoZeroSeeders)
 
 from magnetto.apis.core import api_filters_method
 from magnetto.apis import BaseApi
@@ -109,7 +110,7 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
         # соотносим фильтры из таблицы их действиям
         for filter in filters:
-            url += filtersTable[filter]
+            url += filtersTable.get(filter, '')
 
         # Выбор качества
         for filter in filters:
@@ -125,6 +126,16 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
         for year in filters:
             if type(year) is Year:
                 query += " " + str(year)
+
+        # добавляем каждое слово из фильтра NoWords в запрос
+        for filter in filters:
+            if type(filter) is NoWords:
+                for word in filter.argv:
+                    query += " -" + str(word)
+
+        # убираем раздачи без сидеров
+        if NoZeroSeeders in filters:
+            url += "&sd=1"
 
         url += "&nm=" + quote_plus(query)
 
