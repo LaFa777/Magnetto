@@ -1,10 +1,31 @@
+"""Все классы Api должны наследовать ``BaseApi``"""
+
 from abc import ABC, abstractproperty, abstractmethod
 from grab import Grab
-# TODO: убрать(добавить миксин)
+
 from magnetto.filters import OrderBy, Order
 
 
 class BaseApi(ABC):
+    """Все классы Api должны наследовать ``BaseApi``"""
+
+    filters_default = [OrderBy.DOWNLOADS, Order.DESC]
+
+    def add_filters_default(self, arg_filters):
+        """Добавляет фильтр из ``self.filters_default`` в ``arg_filters``
+        только в том случае, если фильтр такого же типа отсутствует в
+        ``arg_filters``
+
+        Args:
+            arg_filters (List[filters]): Массив фильтров
+        """
+        for def_filter in self.filters_default:
+            for arg_filter in arg_filters:
+                if type(def_filter) == type(arg_filter):
+                    break
+            else:
+                arg_filters.append(def_filter)
+        return arg_filters
 
     @abstractproperty
     def HOME(self):
@@ -16,7 +37,7 @@ class BaseApi(ABC):
     def __init__(self, grab=Grab()):
         """
         Args:
-            grab (:obj:`grab.Grab`): Объект
+            grab (grab.Grab): Объект типа ``grab.Grab``
         """
         pass
 
@@ -27,40 +48,26 @@ class BaseApi(ABC):
         строкой капчи заполняет старую форму и пробует выполнить ёё отправку на
         сервер.
 
-        Examples:
-
-        >>> rt = RutrackerApi(grab)
-        ... try:
-        ...     rt.authorization("Masha", "1234")
-        ... except MagnettoAuthError:
-        ...     print("Некорректные данные для входа")
-        ...     exit(1)
-        ... except MagnettoCaptchaError as e:
-        ...     print("Капча: {url}".format(e))
-        ...     captcha = input()
-        ...     rt.authorization("Masha", "1234", captcha)
-
         Raises:
-            :obj:`magnetto.MagnettoIncorrectСredentials`: Введены неверные
+            ``MagnettoIncorrectСredentials``: Введены неверные
                 данные для входа
-            :obj:`magnetto.MagnettoCaptchaError`: На странице обнаружена капча
+            ``MagnettoCaptchaError``: На странице обнаружена капча
         """
 
     @abstractmethod
-    def search(self, value, filters=[OrderBy.DOWNLOADS, Order.DESC], page=0,
-               limit=999):
+    def search(self, value, filters=[], page=0, limit=999):
         """Выполняет запрос поиска по трекеру.
 
         Args:
-            value (:obj:`str`): Поисковый запрос
-            categories (List[:obj:`magnetto.Category`]): Список категорий для
-                поиска
-            page (:obj:`int`): Страница поиска
-            limit (:obj:`int`): Количество возвращаемых результатов
-            order_by (:obj:`magnetto.OrderBy`): Колонка для сортировки
-            order (:obj:`magnetto.Order`): Порядок сортировки
+            value (str): Поисковый запрос
+            categories (List[filters]): Список категорий для
+                фильтрации конечной выборки
+            page (int): Страница поиска
+            limit (int): Количество возвращаемых результатов
 
-        Todo:
-            * Добавить фильтр на исключение раздач с одинаковым размером (~10%)
-            * добавить задание фильтров по умолчанию глобально (.setup_filters)
+        Returns:
+            ``List[ResultParsePage]``
+
+        Raises:
+            ``MagnettoAuthError``
         """
