@@ -4,7 +4,7 @@ from collections import namedtuple
 from magnetto.errors import MagnettoParseError
 from grab.error import DataNotFound
 
-ResultParseSearchPage = namedtuple("ResultParseSearchPage", [
+ResultParse = namedtuple("ResultParse", [
     "id",
     "name",
     "url",
@@ -17,7 +17,7 @@ ResultParseSearchPage = namedtuple("ResultParseSearchPage", [
     "magnet",
     "torrent"
 ])
-"""Результат разбора страницы объектами типа :obj:`magnetto.BaseParser`
+"""Результат разбора страницы объектами типа ``BaseParser``
 
 Attributes:
     id (str): id раздачи
@@ -36,7 +36,7 @@ Attributes:
 
 def transformParseError(function):
     """Декоратор. Преобразует возможные типы Exception в результате парсинга
-    страницы в единый формат - :obj:`magnetto.MagnettoParseError`.
+    страницы в единый формат - ``MagnettoParseError``.
     """
 
     def handleErrors(self, doc):

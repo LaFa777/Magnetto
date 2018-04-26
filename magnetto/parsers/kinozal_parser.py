@@ -1,7 +1,7 @@
 import re
 import magnetto
 from magnetto.filters import Category
-from magnetto.parsers import (BaseParser, transformParseError, ResultParseSearchPage,
+from magnetto.parsers import (BaseParser, transformParseError, ResultParse,
                               parse_size, parse_date,)
 
 
@@ -44,7 +44,7 @@ class KinozalParser(BaseParser):
             topic_link = tr.xpath('td[2]/a/@href')[0]
             topic_id = re.findall(r'\d+', topic_link)[0]
             category = self.parse_category(tr)
-            item = ResultParseSearchPage(
+            item = ResultParse(
                 id=topic_id,
                 category=category,
                 name=tr.xpath('td[2]/a/text()')[0],

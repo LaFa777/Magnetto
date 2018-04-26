@@ -1,7 +1,6 @@
 import magnetto
 from magnetto.filters import Category
-from magnetto.parsers import (BaseParser, transformParseError,
-                              ResultParseSearchPage)
+from magnetto.parsers import BaseParser, transformParseError, ResultParse
 
 
 class RutrackerParser(BaseParser):
@@ -67,7 +66,7 @@ class RutrackerParser(BaseParser):
             topic_id = tr.xpath('td[4]/div/a/@data-topic_id')[0]
             size_int = int(tr.xpath('td[6]/u')[0].text)
             category = self.parse_category(tr)
-            item = ResultParseSearchPage(
+            item = ResultParse(
                 id=topic_id,
                 category=category,
                 name=tr.xpath('td[4]/div/a')[0].text,
