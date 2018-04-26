@@ -88,26 +88,29 @@ GlobalFilters.append(NoWords, handler_filter_nowords)
 def handler_filter_registred(items, filter):
     """Фильтр по дате регистрации раздачи
     """
-    current_time = int(time.time())
+    current_time = int(float(time.time()))
     filter_time = None
 
+    HOUR = 60 * 60
+    DAY = HOUR * 24
+
     if Registred.TODAY is filter:
-        filter_time = 60 * 60 * 24
+        filter_time = DAY
     elif Registred.YESTERDAY is filter:
-        filter_time = 60 * 60 * 24 * 2
+        filter_time = DAY * 2
     elif Registred.FOR_3_DAYS is filter:
-        filter_time = 60 * 60 * 24 * 3
+        filter_time = DAY * 3
     elif Registred.FOR_WEEK is filter:
-        filter_time = 60 * 60 * 24 * 7
+        filter_time = DAY * 7
     elif Registred.FOR_MONTH is filter:
-        filter_time = 60 * 60 * 24 * 32
+        filter_time = DAY * 32
 
     if not filter_time:
         return items
 
     tmp_arr = []
     for item in items:
-        if int(item.created) >= (current_time - filter_time):
+        if int(float(item.created)) >= (current_time - filter_time):
             tmp_arr.append(item)
     return tmp_arr
 
