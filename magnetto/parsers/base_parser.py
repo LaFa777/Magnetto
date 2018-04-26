@@ -10,13 +10,13 @@ class BaseParser(ABC):
         """Разбирает страницу поиска
 
         Args:
-            doc (:obj:`grab.Document`): Страница поиска
+            doc (``grab.Document``): Страница поиска
 
         Return:
-            List[:obj:`magnetto.ResultParsePage`]: Результаты поиска
+            ``ResultParsePage``
 
         Raises:
-            :obj:`magnetto.MagnettoParseError`: Неудачный разбор страницы
+            ``MagnettoParseError``
         """
 
     @abstractmethod
@@ -24,11 +24,11 @@ class BaseParser(ABC):
         """Разбирает страницу с топиком
 
         Args:
-            doc (:obj:`grab.Document`): Топик страницы
+            doc (``grab.Document``): Топик страницы
 
         Return:
-            :obj:`magnetto.ResultParsePage`
+            ``ResultParsePage``
 
         Raises:
-            :obj:`magnetto.MagnettoParseError`: Неудачный разбор страницы
+            ``MagnettoParseError``
         """

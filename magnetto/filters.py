@@ -4,7 +4,7 @@ from magnetto import MagnettoMisuseError
 
 class Category(Enum):
     """Фильтр по категориям (если указанный фильтр не поддерживается трекером,
-    то трекер не Выполняет поиск)
+    то трекер не выполняет поиск)
     """
     UNDEFINED = 0
     FILMS = 1

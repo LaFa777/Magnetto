@@ -23,13 +23,13 @@ class ApiDispatcher(object):
     def __init__(self, grab=Grab(), objs=[], log_dir=None, coockie_dir=None):
         """
         Args:
-            objs (List[:obj:`magnetto.BaseApi`]): Массив Api объектов
-            grab (:obj:`grab.Grab`, optional): Экземпляр Grab объекта.
+            objs (List[BaseApi]): Массив Api объектов
+            grab (grab.Grab, optional): Экземпляр Grab объекта.
                 Используется для указания своих типов настроек (пример:
                 настройки прокси).
-            log_dir (:obj:`str`, optional): В данную директорию помещается
+            log_dir (str, optional): В данную директорию помещается
                 результат выполнения запроса
-            coockie_dir (:obj:`str`, optional): Директория, для сохранения
+            coockie_dir (str, optional): Директория, для сохранения
                 coockie файлов
         """
         self._grab = grab.clone()
@@ -42,11 +42,11 @@ class ApiDispatcher(object):
         """Добавляет api объект
 
         Args:
-            obj (:obj:`magnetto.BaseApi`): Api объект
+            obj (BaseApi): Api объект
 
         Return:
-            :obj:`True` - объект добавлен
-            :obj:`False` - такой объект уже существует
+            ``True`` - объект добавлен
+            ``False`` - такой объект уже существует
         """
         if isinstance(obj, BaseApi) and obj not in self._apis:
             self._apis.append(obj)
@@ -58,11 +58,11 @@ class ApiDispatcher(object):
         """Возвращает соответствующий экземпляр Api объекта
 
         Args:
-            cls (:obj:`magnetto.BaseApi`): Api класс
+            cls (BaseApi): Api класс
 
         Return:
-            :obj:`magnetto.BaseApi` Соответствущий классу объект
-            :obj:`None` Соответствущего объекта не найдено
+            ``BaseApi`` Соответствущий классу объект
+            ``None`` Соответствущего объекта не найдено
         """
         for obj in self._apis:
             if isinstance(obj, cls):
@@ -74,7 +74,7 @@ class ApiDispatcher(object):
         изменении формы входа и невозможности повторной авторизации)
 
         Args:
-            cls (:obj:`magnetto.BaseApi`): Api класс
+            cls (BaseApi): Api класс
         """
         for obj in self._apis:
             if isinstance(obj, cls):
@@ -84,7 +84,7 @@ class ApiDispatcher(object):
         """Удаляет переданный объект из обработки
 
         Args:
-            obj (:obj:`magnetto.BaseApi`): Api объект
+            obj (BaseApi): Api объект
         """
         if obj in self._apis:
             self._apis.remove(obj)
@@ -95,20 +95,20 @@ class ApiDispatcher(object):
         и cookiefile
 
         Args:
-            cls (:obj:`magnetto.BaseApi`): Инициализирует переданный cls и
+            cls (BaseApi): Инициализирует переданный cls и
                 выполняет :obj:`BaseApi.authorization()`
-            login (:obj:`str`): Логин для входа
-            password (:obj:`str`): Пароль для входа
-            captcha (:obj:`str`): Введенная капча (нужна только при ошибке
+            login (str): Логин для входа
+            password (str): Пароль для входа
+            captcha (str): Введенная капча (нужна только при ошибке
                 предыдущей авторизации)
 
         Return:
-            :obj:`True`: успешная авторизация
+            ``True``: успешная авторизация
 
         Raises:
-            :obj:`magnetto.MagnettoIncorrectСredentials`: введены неверные
+            ``MagnettoIncorrectСredentials``: введены неверные
                 данные для входа
-            :obj:`magnetto.MagnettoCaptchaError`: на странице обнаружена капча
+            ``MagnettoCaptchaError``: на странице обнаружена капча
         """
         if not (captcha and cls in self._fail_apis):
 

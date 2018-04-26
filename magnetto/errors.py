@@ -1,5 +1,5 @@
 class MagnettoError(Exception):
-    """Базовый класс в иерархии Exceptions модуля
+    """Базовый класс в иерархии исключений модуля ``magnetto``
     """
 
 
@@ -28,9 +28,8 @@ class MagnettoCaptchaError(MagnettoError):
     def __init__(self, obj, url):
         """
         Attributes:
-            obj (:obj:`magnetto.BaseApi`): объект, вызвавший исключительную
-                ситацию
-            url (:obj:`str`): ссылка на картинку с капчой
+            obj (BaseApi): объект, вызвавший исключительную ситацию
+            url (str): ссылка на картинку с капчой
         """
         self.url = url
         self.obj = obj
@@ -38,7 +37,7 @@ class MagnettoCaptchaError(MagnettoError):
     def __str__(self):
         """
         Return:
-            :obj:`str`: ссылка на картинку с капчой
+            ``str``: ссылка на картинку с капчой
         """
         return repr(self.url)
 
