@@ -14,17 +14,17 @@ def handler_filter_size(items, filter):
     # устанавливаем фильтр по размеру
     filter_size = None
     if Size.TINY is filter:
-        filter_size = range(0, 1300)
+        filter_size = range(0, 1301)
     elif Size.SMALL is filter:
-        filter_size = range(1300, 2250)
+        filter_size = range(1301, 2251)
     elif Size.MEDIUM is filter:
-        filter_size = range(2250, 4096)
+        filter_size = range(2251, 4097)
     elif Size.BIG is filter:
-        filter_size = range(4096, 9728)
+        filter_size = range(4097, 9729)
     elif Size.LARGE is filter:
-        filter_size = range(9728, 25600)
+        filter_size = range(9729, 25601)
     elif Size.HUGE is filter:
-        filter_size = range(25600, 9999999999)
+        filter_size = range(25601, 9999999999)
 
     # если такой фильтр не был передан, то возвращаем без изменений
     if not filter_size:
