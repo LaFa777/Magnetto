@@ -85,6 +85,7 @@ class Registered(Enum):
     FOR_3_DAYS = 3
     FOR_WEEK = 4
     FOR_MONTH = 5
+    FOR_YEAR = 6
 
 
 class TypeRelease(Enum):

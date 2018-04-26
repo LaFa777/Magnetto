@@ -31,3 +31,8 @@ class TestFilterRegistered(unittest.TestCase):
         items = handler_filter_registered(
             mock_registered_1, Registered.FOR_MONTH)
         self.assertEqual(len(items), 5)
+
+    def test_handler_filter_registered_for_year(self):
+        items = handler_filter_registered(
+            mock_registered_1, Registered.FOR_YEAR)
+        self.assertEqual(len(items), 6)
