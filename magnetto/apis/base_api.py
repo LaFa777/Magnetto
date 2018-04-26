@@ -9,7 +9,7 @@ from magnetto.filters import OrderBy, Order
 class BaseApi(ABC):
     """Все классы Api должны наследовать ``BaseApi``"""
 
-    filters_default = [OrderBy.DOWNLOADS, Order.DESC]
+    filters_default = [OrderBy.SEEDERS, Order.DESC]
 
     def add_filters_default(self, arg_filters):
         """Добавляет фильтр из ``self.filters_default`` в ``arg_filters``
