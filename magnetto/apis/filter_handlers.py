@@ -1,5 +1,6 @@
 import time
 
+from magnetto.errors import MagnettoMisuseError
 from magnetto.apis.core import GlobalFilters
 from magnetto.filters import (Size, NoZeroSeeders, Category, NoWords,
                               Registred, NoEqualSize)
@@ -70,6 +71,10 @@ GlobalFilters.append(Category, handler_filter_category)
 def handler_filter_nowords(items, filter):
     """Удаляет раздачи, содержащие указанные в фильтре слова
     """
+    if filter is NoWords:
+        raise MagnettoMisuseError("Initialize NoWords filter first. "
+                                  "Example: NoWords(\"begin\")")
+
     tmp_arr = []
     for item in items:
         if item.name not in filter:
