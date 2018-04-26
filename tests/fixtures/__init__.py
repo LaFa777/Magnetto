@@ -4,3 +4,4 @@ from .filter_nozeroseeders import mock_nozeroseeders_1
 from .filter_category import mock_category_1
 from .filter_nowords import mock_nowords_1
 from .filter_registred import mock_registred_1
+from .filter_noequalsize import mock_noequalsize_1, mock_noequalsize_2
