@@ -41,8 +41,9 @@ class RutrackerParser(BaseParser):
             "Мультсериалы" in category["root_forum"] or \
                 "Аниме" in category["root_forum"]:
             return Category.CARTOONS
-        elif "кино" in category["root_forum"].lower() or \
-                "Video" in category["root_forum"]:
+        elif "кино" in category["root"].lower() or \
+             "кино" in category["root_forum"].lower() or \
+             "Video" in category["root_forum"]:
             return Category.FILMS
         elif "сериалы" in category["root"].lower():
             return Category.TV_SERIES
