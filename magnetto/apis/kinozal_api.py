@@ -7,21 +7,15 @@ from magnetto.errors import (MagnettoIncorrectСredentials, MagnettoMisuseError,
                              MagnettoAuthError)
 from magnetto.filters import (Category, OrderBy, Order, Year, Resolution,
                               Registred, TypeRelease, Size, Source)
-from magnetto.apis.mixins import (LastRequestMixin, SizeFilterMixin,
-                                  CheckAuthMixin, CategoryFilterMixin,
-                                  NoZeroSeedersFilterMixin, NoWordsFilterMixin)
+from magnetto.apis.core import api_filters_method
+from magnetto.apis.mixins import LastRequestMixin, CheckAuthMixin
 from magnetto.apis import BaseApi
 from magnetto.parsers import KinozalParser
 
 
-class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
-                 CategoryFilterMixin, NoZeroSeedersFilterMixin, NoWordsFilterMixin):
+class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
     HOME = None
-
-    CATEGORIES = {
-        Category.FILMS: ""
-    }
 
     def __init__(self, grab=Grab()):
         self._grab = grab.clone()
@@ -58,13 +52,8 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
 
         return True
 
-    def search(self, value, filters=[OrderBy.DOWNLOADS, Order.DESC], page=0,
-               limit=999):
-        """
-        Note:
-            * поддеживает фильтры только в единичном варианте (последнее
-              сработавшее условие)
-        """
+    @api_filters_method
+    def search(self, query, filters=[], page=0, limit=999):
 
         # вход не был выполнен
         if not self._login:
@@ -78,137 +67,71 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
             page=RESULTS_ON_PAGE * page
         )
 
-        # Сортировать выдачу по:
-        if Order.DESC in filters:
-            url += "&f=0"
-        elif Order.ASC in filters:
-            url += "&f=1"
+        # таблица соответствий фильтров и модифицируемой переменной
+        # 0 - url, 1 - query
+        filtersTable = {
+            Order.DESC: ["&f=0", ''],
+            Order.ASC: ['&f=1', ''],
 
-        # категории
-        # все сериалы 1001
-        if Category.TV_SERIES in filters:
-            url += "&c=1001"
-        # все Фильмы 1002
-        elif Category.FILMS in filters:
-            url += "&c=1002"
-        # все мульты 1003
-        elif Category.CARTOONS in filters:
-            url += "&c=1003"
-        # вся музыка 1004
-        elif Category.MUSICS in filters:
-            url += "&c=1004"
-        # аудиокниги 2
-        elif Category.AUDIOBOOKS in filters:
-            url += "&c=2"
-        # видеоклипы 1 ???
-        # игры 23
-        elif Category.GAMES in filters:
-            url += "&c=23"
-        # программы 32
-        elif Category.PROGRAMS in filters:
-            url += "&c=32"
-        # дизайн графика 40 ???
-        # библиотека (книги) 41
-        elif Category.BOOKS in filters:
-            url += "&c=41"
+            Category.TV_SERIES: ['&c=1001', ''],
+            Category.FILMS: ['&c=1002', ''],
+            Category.CARTOONS: ['&c=1003', ''],
+            Category.MUSICS: ['&c=1004', ''],
+            Category.AUDIOBOOKS: ['&c=2', ''],
+            Category.GAMES: ['&c=23', ''],
+            Category.PROGRAMS: ['&c=32', ''],
+            Category.BOOKS: ['&c=41', ''],
+
+            Resolution.HD: ['&v=3', ' 720p'],
+            Resolution.FULL_HD: ['&v=3', ' 1080p'],
+            Resolution.ULTRA_HD: ['&v=7', ' 2160p'],
+
+            Source.TV_RIP: ['&v=5', ''],
+            Source.WEB_DL_RIP: ['&v=1', ' WEB-DLRip'],
+            Source.HD_RIP: ['&v=1', ' HDRip'],
+            Source.BD_RIP: ['&v=1', ' BDRip'],
+            Source.VHS_RIP: ['', ' VHSRip'],
+            Source.DVD_RIP: ['&v=1', ' DVDRip'],
+            Source.CAM_RIP: ['', ''],
+
+            OrderBy.CREATE: ['&t=0', ''],
+            OrderBy.NAME: ['', ''],  # не реализуем
+            OrderBy.DOWNLOADS: ['&t=5', ''],
+            OrderBy.SEEDERS: ['&t=1', ''],
+            OrderBy.LEECHERS: ['&t=2', ''],
+            OrderBy.MESSAGES: ['&t=4', ''],
+            OrderBy.VIEWS: ['', ''],
+            OrderBy.SIZE: ['&t=3', ''],
+            OrderBy.LAST_MESSAGE: ['&t=6', ''],
+
+            Registred.TODAY: ['&w=1', ''],
+            Registred.YESTERDAY: ['&w=2', ''],
+            Registred.FOR_3_DAYS: ['&w=3', ''],
+            Registred.FOR_WEEK: ['&w=4', ''],
+            Registred.FOR_MONTH: ['&w=5', ''],
+
+            TypeRelease.SILVER: ['&w=12', ''],
+            TypeRelease.GOLD: ['&w=11', ''],
+
+            Size.TINY: ['&w=6', ''],
+            Size.SMALL: ['&w=7', ''],
+            Size.MEDIUM: ['&w=8', ''],
+            Size.BIG: ['&w=9', ''],
+            Size.LARGE: ['&w=10', ''],
+        }
+
+        # соотносим фильтры из таблицы их действиям
+        for filter in filters:
+            url += filtersTable[filter][0]
+            query += filtersTable[filter][0]
 
         # проставляем год
         for filter in filters:
             if type(filter) is Year:
                 url += "&d=" + str(filter)
 
-        # Выбор качества
-        if Resolution.HD in filters and Resolution.FULL_HD in filters:
-            url += "&v=3"
-        elif Resolution.HD in filters:
-            value += " 720p"
-        elif Resolution.FULL_HD in filters:
-            value += " 1080p"
-        elif Resolution.ULTRA_HD in filters:
-            url += "&v=7"
-
-        # выбор формата
-        if Source.TV_RIP in filters:
-            url += "&v=5"
-        elif Source.WEB_DL_RIP in filters:
-            url += "&v=1"
-            value += " WEB-DLRip"
-        elif Source.HD_RIP in filters:
-            value += " HDRip"
-            url += "&v=1"
-        elif Source.BD_RIP in filters:
-            value += " BDRip"
-            url += "&v=1"
-        elif Source.VHS_RIP in filters:
-            value += " VHSRip"
-        elif Source.DVD_RIP in filters:
-            url += "&v=1"
-            value += " DVDRip"
-        # CAM_RIP на этом трекере нит
-        elif Source.CAM_RIP in filters:
-            return []
-
-        # Сортировка результата по:
-        # дата регистрации
-        if OrderBy.CREATE in filters:
-            url += "&t=0"
-        # название темы (не реализован (можно фильтровать выдачу ниже))
-        # elif OrderBy.NAME in filters:
-        #    url += "&t="
-        # Количество скачиваний
-        elif OrderBy.DOWNLOADS in filters:
-            url += "&t=5"
-        # количество сидов
-        elif OrderBy.SEEDERS in filters:
-            url += "&t=1"
-        # количество личей
-        elif OrderBy.LEECHERS in filters:
-            url += "&t=2"
-        # количество сообщений
-        elif OrderBy.MESSAGES:
-            url += "&t=4"
-        # количество просмотров (игнорируем)
-        # elif OrderBy.VIEWS:
-        #     url += "&t="
-        # размер раздачи
-        elif OrderBy.SIZE:
-            url += "&t=3"
-        # последнее сообщение
-        elif OrderBy.LAST_MESSAGE:
-            url += "&t=6"
-
-        # Фильтр по дате регистрации раздачи
-        if Registred.TODAY in filters:
-            url += "&w=1"
-        elif Registred.YESTERDAY in filters:
-            url += "&w=2"
-        elif Registred.FOR_3_DAYS in filters:
-            url += "&w=3"
-        elif Registred.FOR_WEEK in filters:
-            url += "&w=4"
-        elif Registred.FOR_MONTH in filters:
-            url += "&w=5"
-
-        # Фильтр по типу релиза
-        if TypeRelease.SILVER in filters:
-            url += "&w=12"
-        elif TypeRelease.GOLD in filters:
-            url += "&w=11"
-
-        # Фильтр по размеру
-        if Size.TINY in filters:
-            url += "&w=6"
-        elif Size.SMALL in filters:
-            url += "&w=7"
-        elif Size.MEDIUM in filters:
-            url += "&w=8"
-        elif Size.BIG in filters:
-            url += "&w=9"
-        elif Size.LARGE in filters:
-            url += "&w=10"
-
         # добавляем возможно модифицированный поисковый запрос
-        url += "&s=" + quote_plus(value)
+        url += "&s=" + quote_plus(query)
 
         # подготавливаем для запроса
         self._grab.setup(url=url)
@@ -222,9 +145,4 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
         # разбор страницы
         items = self._parser.parse_search(self._grab.doc)
 
-        items = self.add_filter_size(items, filters)
-        items = self.add_filter_nozeroseeders(items, filters)
-        items = self.add_filter_category(items, filters)
-        items = self.add_filter_nowords(items, filters)
-
-        return items[:limit]
+        return items

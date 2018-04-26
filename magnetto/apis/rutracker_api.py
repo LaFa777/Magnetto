@@ -6,19 +6,16 @@ from grab.error import DataNotFound
 import magnetto
 from magnetto.errors import (MagnettoCaptchaError, MagnettoMisuseError,
                              MagnettoAuthError, MagnettoIncorrectСredentials)
-from magnetto.filters import (OrderBy, Order, Resolution, Source, Year)
+from magnetto.filters import OrderBy, Order, Resolution, Source, Year
+
+from magnetto.apis.core import api_filters_method
 from magnetto.apis import BaseApi
-from magnetto.apis.mixins import (CheckAuthMixin, LastRequestMixin,
-                                  SizeFilterMixin, CategoryFilterMixin,
-                                  NoZeroSeedersFilterMixin, NoWordsFilterMixin,
-                                  RegistredFilterMixin, NoEqualSizeFilterMixin)
+from magnetto.apis.mixins import CheckAuthMixin, LastRequestMixin
+
 from magnetto.parsers import RutrackerParser
 
 
-class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
-                   NoZeroSeedersFilterMixin, CategoryFilterMixin,
-                   NoWordsFilterMixin, RegistredFilterMixin,
-                   NoEqualSizeFilterMixin):
+class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
     HOME = None
 
@@ -77,12 +74,15 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
     # раздача должна содержать это слово, -СЛОВО исключить слово,
     # СЛОВО | СЛОВО или)
     # доп инфа: https://rutracker.org/forum/viewtopic.php?t=101236
-    def search(self, value, filters=[OrderBy.DOWNLOADS, Order.DESC], page=0,
-               limit=999):
+    @api_filters_method
+    def search(self, query, filters=[], page=0, limit=999):
 
         # вход не был выполнен
         if not self._login:
             raise MagnettoAuthError()
+
+        # добавляем отсутствующие фильтры
+        filters = self.add_filters_default(filters)
 
         RESULTS_ON_PAGE = 50
 
@@ -92,57 +92,41 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
             page=RESULTS_ON_PAGE * page
         )
 
-        # Сортировать выдачу по:
-        if Order.DESC in filters:
-            url += "&s=2"
-        elif Order.ASC in filters:
-            url += "&s=1"
+        filtersTable = {
+            Order.DESC: "&s=2",
+            Order.ASC: "&s=1",
 
-        # Упорядочить выдачу результатов по критерию:
-        # дата регистрации
-        if OrderBy.CREATE in filters:
-            url += "&o=1"
-        # название темы
-        elif OrderBy.NAME in filters:
-            url += "&o=2"
-        # Количество скачиваний
-        elif OrderBy.DOWNLOADS in filters:
-            url += "&o=4"
-        # количество сидов
-        elif OrderBy.SEEDERS in filters:
-            url += "&o=10"
-        # количество личей
-        elif OrderBy.LEECHERS in filters:
-            url += "&o=11"
-        # количество сообщений
-        elif OrderBy.MESSAGES:
-            url += "&o=5"
-        # количество просмотров
-        elif OrderBy.VIEWS:
-            url += "&o=6"
-        # размер раздачи
-        elif OrderBy.SIZE:
-            url += "&o=7"
-        # последнее сообщение
-        elif OrderBy.LAST_MESSAGE:
-            url += "&o=8"
+            OrderBy.CREATE: "&o=1",
+            OrderBy.NAME: "&o=2",
+            OrderBy.DOWNLOADS: "&o=4",
+            OrderBy.SEEDERS: "&o=10",
+            OrderBy.LEECHERS: "&o=11",
+            OrderBy.MESSAGES: "&o=5",
+            OrderBy.VIEWS: "&o=6",
+            OrderBy.SIZE: "&o=7",
+            OrderBy.LAST_MESSAGE: "&o=8"
+        }
+
+        # соотносим фильтры из таблицы их действиям
+        for filter in filters:
+            url += filtersTable[filter]
 
         # Выбор качества
         for filter in filters:
             if type(filter) is Resolution:
-                value += " " + filter.value
+                query += " " + filter.value
 
         # выбор формата
         for filter in filters:
             if type(filter) is Source:
-                value += ' ' + filter.value.replace(',', ' | ')
+                query += ' ' + filter.value.replace(',', ' | ')
 
         # добавляем год
         for year in filters:
             if type(year) is Year:
-                value += " " + str(year)
+                query += " " + str(year)
 
-        url += "&nm=" + quote_plus(value)
+        url += "&nm=" + quote_plus(query)
 
         # подготавливаем для запроса
         self._grab.setup(url=url)
@@ -156,11 +140,5 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin, SizeFilterMixin,
         # разбор страницы
         items = self._parser.parse_search(self._grab.doc)
 
-        items = self.add_filter_size(items, filters)
-        items = self.add_filter_nozeroseeders(items, filters)
-        items = self.add_filter_category(items, filters)
-        items = self.add_filter_nowords(items, filters)
-        items = self.add_filter_registred(items, filters)
-        items = self.add_filter_noequalsize(items, filters)
-
-        return items[:limit]
+        # нужно возвращать ВСЕ элементы. Фильтрация происходит в декораторе
+        return items
