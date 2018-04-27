@@ -4,7 +4,8 @@ from .filter_handlers import (handler_filter_size, handler_filter_nozeroseeders,
                               handler_filter_registered,
                               handler_filter_noequalsize,
                               handler_filter_resolution,
-                              handler_filter_order)
+                              handler_filter_order,
+                              handler_filter_source)
 from .mixins import LastRequestMixin, CheckAuthMixin
 from .base_api import BaseApi
 from .rutracker_api import RutrackerApi
@@ -15,7 +16,7 @@ __all__ = (
     'handler_filter_size', 'handler_filter_nozeroseeders',
     'handler_filter_category', 'handler_filter_nowords',
     'handler_filter_registered', 'handler_filter_noequalsize',
-    'handler_filter_resolution',
+    'handler_filter_resolution', 'handler_filter_source',
     'LastRequestMixin', 'CheckAuthMixin',
     'BaseApi', 'RutrackerApi', 'KinozalApi',
 )

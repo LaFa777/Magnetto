@@ -6,10 +6,10 @@ from magnetto.errors import MagnettoMisuseError
 from magnetto.apis.core import GlobalFilters
 from magnetto.filters import (Size, NoZeroSeeders, Category, NoWords,
                               Registered, NoEqualSize, OrderBy, Order,
-                              Resolution)
+                              Resolution, Source)
 
 
-# TODO: добавить Source, Year, Or
+# TODO: добавить Year, Or
 
 def handler_filter_order(items, filter, arg_filters):
     """Сортирует раздачи по убыванию или возрастанию
@@ -200,3 +200,21 @@ def handler_filter_resolution(items, filter, arg_filters):
 
 
 GlobalFilters.append(Resolution, handler_filter_resolution)
+
+
+def handler_filter_source(items, filter, arg_filters):
+    """Проверяет наличие ключевого слова из Source.ITEM в названии раздачи
+    """
+    tmp_arr = []
+    for item in items:
+        is_contain = False
+        words = filter.value.strip().split(',')
+        for word in words:
+            if word and word.lower() in item.name.lower():
+                is_contain = True
+        if is_contain:
+            tmp_arr.append(item)
+    return tmp_arr
+
+
+GlobalFilters.append(Source, handler_filter_resolution)
