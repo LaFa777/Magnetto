@@ -14,3 +14,4 @@ from .filter_order import (mock_order_created_raw, mock_order_created_asc,
                            mock_order_leechers_raw, mock_order_leechers_asc,
                            mock_order_leechers_desc, mock_order_size_raw,
                            mock_order_size_asc, mock_order_size_desc)
+from .filter_resolution import mock_resolution_1
