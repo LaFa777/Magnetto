@@ -1,37 +1,47 @@
 import re
 import time
-from collections import namedtuple
+from attr import attrs, attrib, validators
 from magnetto.errors import MagnettoParseError
 from grab.error import DataNotFound
 
-ResultParse = namedtuple("ResultParse", [
-    "id",
-    "name",
-    "url",
-    "category",
-    "size",
-    "seeders",
-    "leechers",
-    "downloads",
-    "created",
-    "magnet",
-    "torrent"
-])
-"""Результат разбора страницы объектами типа ``BaseParser``
 
-Attributes:
-    id (str): id раздачи
-    name (str): название раздачи
-    url (str): ссылка на страницу с раздачей
-    category (str): категория
-    size (str): размер (в байтах)
-    seeders (str): количество раздающих
-    leechers (str): количество скачивающих
-    downloads (str): количество скачиваний
-    created (str): дата создания
-    magnet (str): magnet ссылка
-    torrent (str): ссылка на торрент файл
-"""
+def check_is_digit(self, attribute, value):
+    if not value.isdigit():
+        raise ValueError("{attr} must be digit".format(attr=attribute.name))
+
+
+@attrs(frozen=True)
+class ResultParse:
+    """Результат разбора страницы объектами типа ``BaseParser``
+
+    Attributes:
+        id (str): id раздачи
+        name (str): название раздачи
+        url (str): ссылка на страницу с раздачей
+        category (str): категория
+        size (str): размер (в байтах)
+        seeders (str): количество раздающих
+        leechers (str): количество скачивающих
+        downloads (str): количество скачиваний
+        created (str): дата создания
+        magnet (str): magnet ссылка
+        torrent (str): ссылка на торрент файл
+    """
+
+    id = attrib(validator=[validators.instance_of(str), check_is_digit])
+    name = attrib(validator=[validators.instance_of(str), ])
+    # TODO: валидация
+    url = attrib(validator=[validators.instance_of(str), ])
+    # TODO: валидация
+    category = attrib()
+    size = attrib(validator=[validators.instance_of(str), check_is_digit])
+    seeders = attrib(validator=[validators.instance_of(str), check_is_digit])
+    leechers = attrib(validator=[validators.instance_of(str), check_is_digit])
+    downloads = attrib(validator=[validators.instance_of(str), check_is_digit])
+    created = attrib(validator=[validators.instance_of(str), check_is_digit])
+    magnet = attrib(
+        validator=[validators.instance_of(str), ])
+    torrent = attrib(validator=[validators.instance_of(str), ])
 
 
 def transformParseError(function):
