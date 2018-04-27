@@ -194,7 +194,7 @@ def handler_filter_resolution(items, filter, arg_filters):
     """
     tmp_arr = []
     for item in items:
-        if filter.value.strip() in item.name:
+        if filter.value.strip().lower() in item.name.lower():
             tmp_arr.append(item)
     return tmp_arr
 
