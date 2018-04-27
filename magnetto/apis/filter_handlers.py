@@ -6,10 +6,10 @@ from magnetto.errors import MagnettoMisuseError
 from magnetto.apis.core import GlobalFilters
 from magnetto.filters import (Size, NoZeroSeeders, Category, NoWords,
                               Registered, NoEqualSize, OrderBy, Order,
-                              Resolution, Source)
+                              Resolution, Source, Year)
 
 
-# TODO: добавить Year, Or
+# TODO: добавить Or
 
 def handler_filter_order(items, filter, arg_filters):
     """Сортирует раздачи по убыванию или возрастанию
@@ -217,4 +217,21 @@ def handler_filter_source(items, filter, arg_filters):
     return tmp_arr
 
 
-GlobalFilters.append(Source, handler_filter_resolution)
+GlobalFilters.append(Source, handler_filter_source)
+
+
+def handler_filter_year(items, filter, arg_filters):
+    """Проверяет наличие года выпуска в названии раздачи
+    """
+    if filter is Year:
+        raise MagnettoMisuseError("Initialize Year filter first. "
+                                  "Example: Year(\"2018\")")
+
+    tmp_arr = []
+    for item in items:
+        if str(filter) in item.name:
+            tmp_arr.append(item)
+    return tmp_arr
+
+
+GlobalFilters.append(Year, handler_filter_year)

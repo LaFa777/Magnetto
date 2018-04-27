@@ -118,6 +118,8 @@ class Year:
     """
 
     def __init__(self, year):
+        if not str(year).isdigit():
+            raise MagnettoMisuseError("year must be digit")
         self.year = str(year)
 
     def __str__(self):
