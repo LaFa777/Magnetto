@@ -10,5 +10,5 @@ class TestFilterNoZeroSeeders(unittest.TestCase):
 
     def test_handler_filter_nozeroseeders(self):
         items = handler_filter_nozeroseeders(
-            mock_nozeroseeders_1, NoZeroSeeders)
+            mock_nozeroseeders_1, NoZeroSeeders, [NoZeroSeeders])
         self.assertEqual(len(items), 2)

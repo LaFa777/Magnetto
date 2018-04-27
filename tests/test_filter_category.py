@@ -10,45 +10,45 @@ class TestFilterCategory(unittest.TestCase):
 
     def test_handler_filter_category_undefined(self):
         items = handler_filter_category(
-            mock_category_1, Category.UNDEFINED)
+            mock_category_1, Category.UNDEFINED, [Category.UNDEFINED])
         self.assertEqual(len(items), 1)
 
     def test_handler_filter_category_films(self):
         items = handler_filter_category(
-            mock_category_1, Category.FILMS)
+            mock_category_1, Category.FILMS, [Category.FILMS])
         self.assertEqual(len(items), 1)
 
     def test_handler_filter_category_tv_series(self):
         items = handler_filter_category(
-            mock_category_1, Category.TV_SERIES)
+            mock_category_1, Category.TV_SERIES, [Category.TV_SERIES])
         self.assertEqual(len(items), 1)
 
     def test_handler_filter_category_cartoons(self):
         items = handler_filter_category(
-            mock_category_1, Category.CARTOONS)
+            mock_category_1, Category.CARTOONS, [Category.CARTOONS])
         self.assertEqual(len(items), 1)
 
     def test_handler_filter_category_musics(self):
         items = handler_filter_category(
-            mock_category_1, Category.MUSICS)
+            mock_category_1, Category.MUSICS, [Category.MUSICS])
         self.assertEqual(len(items), 1)
 
     def test_handler_filter_category_books(self):
         items = handler_filter_category(
-            mock_category_1, Category.BOOKS)
+            mock_category_1, Category.BOOKS, [Category.BOOKS])
         self.assertEqual(len(items), 1)
 
     def test_handler_filter_category_audiobooks(self):
         items = handler_filter_category(
-            mock_category_1, Category.AUDIOBOOKS)
+            mock_category_1, Category.AUDIOBOOKS, [Category.AUDIOBOOKS])
         self.assertEqual(len(items), 1)
 
     def test_handler_filter_category_games(self):
         items = handler_filter_category(
-            mock_category_1, Category.GAMES)
+            mock_category_1, Category.GAMES, [Category.GAMES])
         self.assertEqual(len(items), 1)
 
     def test_handler_filter_category_programs(self):
         items = handler_filter_category(
-            mock_category_1, Category.PROGRAMS)
+            mock_category_1, Category.PROGRAMS, [Category.PROGRAMS])
         self.assertEqual(len(items), 1)
