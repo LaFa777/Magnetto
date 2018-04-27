@@ -3,7 +3,7 @@ import unittest
 from magnetto.filters import Category
 from magnetto.apis import handler_filter_category
 
-from .fixtures import mock_category_1
+from fixtures import mock_category_1
 
 
 class TestFilterCategory(unittest.TestCase):

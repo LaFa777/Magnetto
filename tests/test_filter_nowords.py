@@ -4,7 +4,7 @@ from magnetto.errors import MagnettoMisuseError
 from magnetto.filters import NoWords
 from magnetto.apis import handler_filter_nowords
 
-from .fixtures import mock_nowords_1
+from fixtures import mock_nowords_1
 
 
 class TestFilterNoWords(unittest.TestCase):

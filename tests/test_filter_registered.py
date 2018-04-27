@@ -3,7 +3,7 @@ import unittest
 from magnetto.filters import Registered
 from magnetto.apis import handler_filter_registered
 
-from .fixtures import mock_registered_1
+from fixtures import mock_registered_1
 
 
 class TestFilterRegistered(unittest.TestCase):

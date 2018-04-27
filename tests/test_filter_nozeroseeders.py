@@ -3,7 +3,7 @@ import unittest
 from magnetto.filters import NoZeroSeeders
 from magnetto.apis import handler_filter_nozeroseeders
 
-from .fixtures import mock_nozeroseeders_1
+from fixtures import mock_nozeroseeders_1
 
 
 class TestFilterNoZeroSeeders(unittest.TestCase):

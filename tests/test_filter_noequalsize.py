@@ -3,7 +3,7 @@ import unittest
 from magnetto.filters import NoEqualSize
 from magnetto.apis import handler_filter_noequalsize
 
-from .fixtures import mock_noequalsize_1, mock_noequalsize_2
+from fixtures import mock_noequalsize_1, mock_noequalsize_2
 
 
 class TestFilterNoEqualSize(unittest.TestCase):

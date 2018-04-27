@@ -3,7 +3,7 @@ import unittest
 from magnetto.filters import Size
 from magnetto.apis import handler_filter_size
 
-from .fixtures import mock_size_1
+from fixtures import mock_size_1
 
 
 class TestFilterSize(unittest.TestCase):
