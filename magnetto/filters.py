@@ -63,8 +63,6 @@ class OrderBy(Enum):
         SEEDER: Количество сидеров
         LEECHER: Количество личей
         SIZE: Размер
-        MESSAGES: Количество сообщений в топике
-        LAST_MESSAGE: Последнее сообщение
     """
     CREATE = 1
     NAME = 2
@@ -72,9 +70,6 @@ class OrderBy(Enum):
     SEEDERS = 4
     LEECHERS = 5
     SIZE = 6
-    MESSAGES = 7
-    LAST_MESSAGE = 8
-    VIEWS = 9
 
 
 class Registered(Enum):
