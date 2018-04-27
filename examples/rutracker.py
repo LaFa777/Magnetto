@@ -17,5 +17,5 @@ api = RutrackerApi(grab)
 api.authorization(trackers[RutrackerApi]['login'],
                   trackers[RutrackerApi]['password'])
 
-print(api.search("начало", filters=[
+print(api.search(query="начало", filters=[
         Year(2010), Resolution.FULL_HD, Size.LARGE], limit=1))
