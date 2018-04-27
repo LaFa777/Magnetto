@@ -72,7 +72,7 @@ def parse_date(str):
     unix = time.strptime(datetime_str, "%d.%m.%Y %H:%M")
 
     # переводим в timestamp
-    return repr(time.mktime(unix))
+    return repr(int(float(time.mktime(unix))))
 
 
 def parse_size(str):
@@ -88,4 +88,4 @@ def parse_size(str):
         raise MagnettoParseError(
             "Invalid parse size_str(\"{}\")".format(size_str))
 
-    return repr(size_mb)
+    return repr(int(float(size_mb)))
