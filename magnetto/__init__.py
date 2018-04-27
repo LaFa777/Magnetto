@@ -15,10 +15,14 @@ from .parsers.rutracker_parser import RutrackerParser
 from .parsers.kinozal_parser import KinozalParser
 
 from .apis.core import GlobalFilters, api_filters_method
-from .apis.filter_handlers import (handler_filter_size, handler_filter_nozeroseeders,
-                                   handler_filter_category, handler_filter_nowords,
+from .apis.filter_handlers import (handler_filter_size,
+                                   handler_filter_nozeroseeders,
+                                   handler_filter_category,
+                                   handler_filter_nowords,
                                    handler_filter_registered,
-                                   handler_filter_noequalsize)
+                                   handler_filter_noequalsize,
+                                   handler_filter_resolution,
+                                   handler_filter_order)
 from .apis.mixins import CheckAuthMixin, LastRequestMixin
 from .apis.base_api import BaseApi
 from .apis.rutracker_api import RutrackerApi
@@ -39,6 +43,7 @@ __all__ = [
     'handler_filter_size', 'handler_filter_nozeroseeders',
     'handler_filter_category', 'handler_filter_nowords',
     'handler_filter_registered', 'handler_filter_noequalsize',
+    'handler_filter_resolution', 'handler_filter_order',
     'CheckAuthMixin', 'LastRequestMixin',
     'BaseApi', 'RutrackerApi', 'KinozalApi',
     'ApiDispatcher'

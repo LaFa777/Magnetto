@@ -5,10 +5,11 @@ import attr
 from magnetto.errors import MagnettoMisuseError
 from magnetto.apis.core import GlobalFilters
 from magnetto.filters import (Size, NoZeroSeeders, Category, NoWords,
-                              Registered, NoEqualSize, OrderBy, Order)
+                              Registered, NoEqualSize, OrderBy, Order,
+                              Resolution)
 
 
-# TODO: добавить OrderBy, Resolution, Source, Year
+# TODO: добавить Source, Year, Or
 
 def handler_filter_order(items, filter, arg_filters):
     """Сортирует раздачи по убыванию или возрастанию
@@ -186,3 +187,16 @@ def handler_filter_noequalsize(items, filter, arg_filters):
 
 
 GlobalFilters.append(NoEqualSize, handler_filter_noequalsize)
+
+
+def handler_filter_resolution(items, filter, arg_filters):
+    """Проверяет наличие ключевых слов для разрешения у каждого item
+    """
+    tmp_arr = []
+    for item in items:
+        if filter.value.strip() in item.name:
+            tmp_arr.append(item)
+    return tmp_arr
+
+
+GlobalFilters.append(Resolution, handler_filter_resolution)
