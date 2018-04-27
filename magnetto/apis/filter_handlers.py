@@ -47,7 +47,7 @@ def handler_filter_order(items, filter, arg_filters):
 GlobalFilters.append(Order, handler_filter_order)
 
 
-def handler_filter_size(items, filter):
+def handler_filter_size(items, filter, arg_filters):
     """Удаляет раздачи, не соответсвующие переданному фильтру размера
     """
     # устанавливаем фильтр по размеру
@@ -80,7 +80,7 @@ def handler_filter_size(items, filter):
 GlobalFilters.append(Size, handler_filter_size)
 
 
-def handler_filter_nozeroseeders(items, filter):
+def handler_filter_nozeroseeders(items, filter, arg_filters):
     """Удаляет раздачи без сидеров
     """
     tmp_arr = []
@@ -93,7 +93,7 @@ def handler_filter_nozeroseeders(items, filter):
 GlobalFilters.append(NoZeroSeeders, handler_filter_nozeroseeders)
 
 
-def handler_filter_category(items, filter):
+def handler_filter_category(items, filter, arg_filters):
     """Удаляет раздачи, не соответствующие категории
     """
     tmp_arr = []
@@ -106,7 +106,7 @@ def handler_filter_category(items, filter):
 GlobalFilters.append(Category, handler_filter_category)
 
 
-def handler_filter_nowords(items, filter):
+def handler_filter_nowords(items, filter, arg_filters):
     """Удаляет раздачи, содержащие указанные в фильтре слова
     """
     if filter is NoWords:
@@ -123,7 +123,7 @@ def handler_filter_nowords(items, filter):
 GlobalFilters.append(NoWords, handler_filter_nowords)
 
 
-def handler_filter_registered(items, filter):
+def handler_filter_registered(items, filter, arg_filters):
     """Фильтр по дате регистрации раздачи
     """
     current_time = int(float(time.time()))
@@ -156,7 +156,7 @@ def handler_filter_registered(items, filter):
 GlobalFilters.append(Registered, handler_filter_registered)
 
 
-def handler_filter_noequalsize(items, filter):
+def handler_filter_noequalsize(items, filter, arg_filters):
     # можно передавать в фильтр просто класс
     if filter is NoEqualSize:
         filter = NoEqualSize()
