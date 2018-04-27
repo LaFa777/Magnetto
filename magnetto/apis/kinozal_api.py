@@ -122,8 +122,8 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
         # соотносим фильтры из таблицы их действиям
         for filter in filters:
-            url += filtersTable[filter][0]
-            query += filtersTable[filter][0]
+            url += filtersTable.get(filter, [""])[0]
+            query += filtersTable.get(filter, [""])[0]
 
         # проставляем год
         for filter in filters:
