@@ -1,12 +1,50 @@
 import time
 
+import attr
+
 from magnetto.errors import MagnettoMisuseError
 from magnetto.apis.core import GlobalFilters
 from magnetto.filters import (Size, NoZeroSeeders, Category, NoWords,
-                              Registered, NoEqualSize)
+                              Registered, NoEqualSize, OrderBy, Order)
 
 
-# TODO: добавить Order, OrderBy
+# TODO: добавить OrderBy, Resolution, Source, Year
+
+def handler_filter_order(items, filter, arg_filters):
+    """Сортирует раздачи по убыванию или возрастанию
+    """
+
+    # сначала определим столбец, по которому происходит сортировка
+    index = None
+    if OrderBy.CREATE in arg_filters:
+        index = "created"
+    elif OrderBy.NAME in arg_filters:
+        index = "name"
+    elif OrderBy.DOWNLOADS in arg_filters:
+        index = "downloads"
+    elif OrderBy.SEEDERS in arg_filters:
+        index = "seeders"
+    elif OrderBy.LEECHERS in arg_filters:
+        index = "leechers"
+    elif OrderBy.SIZE in arg_filters:
+        index = "size"
+    else:
+        return items
+
+    # для числовых сортируем предварительно приведя к int
+    if "name" in index and filter is Order.DESC:
+        return sorted(items, key=lambda item: getattr(item, index), reverse=True)
+    elif "name" in index and filter is Order.ASC:
+        return sorted(items, key=lambda item: getattr(item, index), reverse=False)
+    elif filter is Order.DESC:
+        return sorted(items, key=lambda item: int(getattr(item, index)), reverse=True)
+    elif filter is Order.ASC:
+        return sorted(items, key=lambda item: int(getattr(item, index)), reverse=False)
+    else:
+        return items
+
+
+GlobalFilters.append(Order, handler_filter_order)
 
 
 def handler_filter_size(items, filter):
