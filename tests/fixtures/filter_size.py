@@ -1,27 +1,11 @@
-from magnetto import ResultParse
-
-
-def build_data(size):
-    return ResultParse(
-        id='',
-        name='',
-        url='',
-        category='',
-        size=str(size),
-        seeders='',
-        leechers='',
-        downloads='',
-        created='',
-        magnet='',
-        torrent='')
-
+from .utils import build_data
 
 mock_size_1 = (
-    build_data('1024'),
-    build_data('1300'),
-    build_data('2000'),
-    build_data('4000'),
-    build_data('5000'),
-    build_data('10000'),
-    build_data('30000'),
+    build_data(size=1024),
+    build_data(size=1300),
+    build_data(size=2000),
+    build_data(size=4000),
+    build_data(size=5000),
+    build_data(size=10000),
+    build_data(size=30000),
 )

@@ -2,12 +2,13 @@ import re
 import time
 from attr import attrs, attrib, validators
 from magnetto.errors import MagnettoParseError
+from magnetto.filters import Category
 from grab.error import DataNotFound
 
 
-def check_is_digit(self, attribute, value):
+def check_is_digit(self, attr, value):
     if not value.isdigit():
-        raise ValueError("{attr} must be digit".format(attr=attribute.name))
+        raise ValueError("{attr} must be digit".format(attr=attr.name))
 
 
 @attrs(frozen=True)
@@ -32,16 +33,19 @@ class ResultParse:
     name = attrib(validator=[validators.instance_of(str), ])
     # TODO: валидация
     url = attrib(validator=[validators.instance_of(str), ])
-    # TODO: валидация
-    category = attrib()
     size = attrib(validator=[validators.instance_of(str), check_is_digit])
-    seeders = attrib(validator=[validators.instance_of(str), check_is_digit])
-    leechers = attrib(validator=[validators.instance_of(str), check_is_digit])
-    downloads = attrib(validator=[validators.instance_of(str), check_is_digit])
-    created = attrib(validator=[validators.instance_of(str), check_is_digit])
-    magnet = attrib(
-        validator=[validators.instance_of(str), ])
+    magnet = attrib(validator=[validators.instance_of(str), ])
     torrent = attrib(validator=[validators.instance_of(str), ])
+    # TODO: валидация
+    seeders = attrib(default='0', validator=[
+                     validators.instance_of(str), check_is_digit])
+    leechers = attrib(default='0', validator=[
+                      validators.instance_of(str), check_is_digit])
+    downloads = attrib(default='0', validator=[
+                       validators.instance_of(str), check_is_digit])
+    created = attrib(default='0', validator=[
+                     validators.instance_of(str), check_is_digit])
+    category = attrib(default=Category.UNDEFINED)
 
 
 def transformParseError(function):
@@ -68,7 +72,7 @@ def parse_date(str):
     unix = time.strptime(datetime_str, "%d.%m.%Y %H:%M")
 
     # переводим в timestamp
-    return repr(time.mktime(unix))
+    return repr(int(float(time.mktime(unix))))
 
 
 def parse_size(str):
@@ -84,4 +88,4 @@ def parse_size(str):
         raise MagnettoParseError(
             "Invalid parse size_str(\"{}\")".format(size_str))
 
-    return repr(size_mb)
+    return repr(int(float(size_mb)))

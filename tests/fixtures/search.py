@@ -1,7 +1,7 @@
-from magnetto import ResultParseSearchPage
+from magnetto import ResultParse
 
 mock_search_1 = (
-    ResultParseSearchPage(
+    ResultParse(
         id='5548006',
         name='Tarek Z. - Python Microservices Development ',
         url='http://localhost:9877/rutracker/viewtopic.php?t=5548006',
@@ -13,7 +13,7 @@ mock_search_1 = (
         created='1523570132',
         magnet='',
         torrent='http://localhost:9877/rutracker/dl.php?t=5548006'),
-    ResultParseSearchPage(
+    ResultParse(
         id='5548004',
         name='Yamanoor S.',
         url='http://localhost:9877/rutracker/viewtopic.php?t=5548004',

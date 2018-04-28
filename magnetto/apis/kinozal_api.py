@@ -99,10 +99,7 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
             OrderBy.DOWNLOADS: ['&t=5', ''],
             OrderBy.SEEDERS: ['&t=1', ''],
             OrderBy.LEECHERS: ['&t=2', ''],
-            OrderBy.MESSAGES: ['&t=4', ''],
-            OrderBy.VIEWS: ['', ''],
             OrderBy.SIZE: ['&t=3', ''],
-            OrderBy.LAST_MESSAGE: ['&t=6', ''],
 
             Registered.TODAY: ['&w=1', ''],
             Registered.YESTERDAY: ['&w=2', ''],
@@ -122,8 +119,8 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
         # соотносим фильтры из таблицы их действиям
         for filter in filters:
-            url += filtersTable[filter][0]
-            query += filtersTable[filter][0]
+            url += filtersTable.get(filter, [""])[0]
+            query += filtersTable.get(filter, [""])[1]
 
         # проставляем год
         for filter in filters:

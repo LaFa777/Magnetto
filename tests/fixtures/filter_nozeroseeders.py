@@ -1,24 +1,9 @@
-from magnetto import ResultParse
-
-
-def build_data(seeders):
-    return ResultParse(
-        id='',
-        name='',
-        url='',
-        category='',
-        size='',
-        seeders=str(seeders),
-        leechers='',
-        downloads='',
-        created='',
-        magnet='',
-        torrent='')
+from .utils import build_data
 
 
 mock_nozeroseeders_1 = (
-    build_data(0),
-    build_data(25),
-    build_data(0),
-    build_data(11),
+    build_data(seeders=0),
+    build_data(seeders=25),
+    build_data(seeders=0),
+    build_data(seeders=11),
 )

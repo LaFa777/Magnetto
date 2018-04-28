@@ -102,10 +102,7 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
             OrderBy.DOWNLOADS: "&o=4",
             OrderBy.SEEDERS: "&o=10",
             OrderBy.LEECHERS: "&o=11",
-            OrderBy.MESSAGES: "&o=5",
-            OrderBy.VIEWS: "&o=6",
             OrderBy.SIZE: "&o=7",
-            OrderBy.LAST_MESSAGE: "&o=8"
         }
 
         # соотносим фильтры из таблицы их действиям

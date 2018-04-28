@@ -23,6 +23,8 @@ def api_filters_method(function):
     """
 
     def handle_items(self, **kwargs):
+        kwargs['filters'] = kwargs.get('filters', self.filters_default)
+
         # TODO: проверять что не был передан второй фильтр из одной и той же
         # категории
 
@@ -38,7 +40,8 @@ def api_filters_method(function):
                 if filter is filter_type or \
                    type(filter) is filter_type:
                     for func in handlers:
-                        result_items = func(result_items, filter)
+                        result_items = func(result_items, filter,
+                                            kwargs['filters'])
 
         # ограничиваем количество возвращаемых значений
         return result_items[:int(kwargs.get('limit', 999))]
