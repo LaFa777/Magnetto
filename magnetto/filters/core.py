@@ -70,7 +70,7 @@ class VideoResolution(Enum):
     ULTRA_HD = "2160p"
 
     def __str__(self):
-        return str(self.value)
+        return str(self.value.strip())
 
 
 class VideoSource(Enum):
@@ -85,7 +85,7 @@ class VideoSource(Enum):
     CAM_RIP = "CAMRIP,CAM-RIP"
 
     def __str__(self):
-        return str(self.value)
+        return str(self.value.strip())
 
     def __iter__(self):
         for word in self.value.split(','):
@@ -150,6 +150,8 @@ class NoWords(UserList):
         Attributes:
             argv (str, ...): Слова для исключения из выдачи
         """
+        args = map(lambda word: word.lower(), args)
+
         self.data = args
 
 
@@ -166,8 +168,9 @@ class NoEqualSize:
         Attributes:
             percent (int): Допустимый процент разброса по размеру
         """
-        if percent <= 0 or percent >= 100:
-            raise MagnettoMisuseError("Arg must be int (0 < x < 100)")
+        if percent <= 0 or percent >= 100 or not isinstance(percent, int):
+            raise MagnettoMisuseError(
+                "Arg \"percent\" must be int (0 < x < 100)")
 
         self.percent = percent
 

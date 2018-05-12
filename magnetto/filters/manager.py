@@ -4,18 +4,26 @@ from magnetto.errors import MagnettoMisuseError
 
 
 class FiltersManager(UserDict):
-    """Удобный способ работы с массивом фильтров.
+    """Удобный способ работы с массивом фильтров. Выполняет проверки на
+    единственность переданного типа фильтра. Объединяет фильтры с фильтрами по
+    умолчанию.
     """
 
     def __init__(self, filters, defaults=[]):
+        """
+        Attributes:
+            filters (List[filter]): массив фильтров
+            defaults (List[filter]): массив фильтров, которые будут обединены с
+                filters в случае отсутствия таковых.
+        """
         self._defaults = defaults
         self.data = []
 
         self.appends(filters)
 
     def appends(self, filters):
-        """Соединяет указанные фильтры с default_filters.
-        Дополнительно проверяет, что передан только 1 фильтр одного типа.
+        """Проверяет, что передан только 1 фильтр одного типа. Дополняет filters фильтрами по умолчанию, в случае отсутствия фильтра такого же
+        типа.
         """
         # сначала добавим фильтры по умолчанию (если такие отсутствуют)
         for default in self._defaults:

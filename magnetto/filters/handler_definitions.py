@@ -1,15 +1,14 @@
 import time
 
-import attr
-
 from magnetto.errors import MagnettoMisuseError
 
-from .core import OrderBy, DateRegistered
+from .core import Order, OrderBy, LimitSize, DateRegistered
 
 
 def handler_filter_order(items, filter):
-    """Сортирует раздачи по убыванию или возрастанию
-    """
+    if filter is Order:
+        raise MagnettoMisuseError("Initialize Order filter first. "
+                                  "Example: Order(\"OrderBy.SEEDERS\")")
 
     # сначала определим столбец, по которому происходит сортировка
     index = None
@@ -29,7 +28,6 @@ def handler_filter_order(items, filter):
         return items
 
     # для числовых сортируем предварительно приведя к int
-    # изменить как в книжке getattr
     if "name" in index and filter.asc is False:
         return sorted(items,
                       key=lambda item: getattr(item, index),
@@ -51,12 +49,15 @@ def handler_filter_order(items, filter):
 
 
 def handler_filter_limitsize(items, filter):
-    """Удаляет раздачи, не соответсвующие переданному фильтру размера
+    """Убирает не соответствующие размеру раздачи
     """
-    # убираем не соответствующие фильтру раздачи
+    if filter is LimitSize:
+        raise MagnettoMisuseError("Initialize LimitSize filter first. "
+                                  "Example: LimitSize(\"5000MB\")")
+
     tmp_arr = []
     for item in items:
-        if int(item.size) <= filter_size:
+        if int(item.size) <= int(filter):
             tmp_arr.append(item)
     return tmp_arr
 
@@ -72,7 +73,7 @@ def handler_filter_nozeroseeders(items, filter):
 
 
 def handler_filter_category(items, filter):
-    """Удаляет раздачи, не соответствующие категории
+    """Удаляет раздачи, не соответствующие переданной категории
     """
     tmp_arr = []
     for item in items:
@@ -82,7 +83,7 @@ def handler_filter_category(items, filter):
 
 
 def handler_filter_nowords(items, filter):
-    """Удаляет раздачи, содержащие указанные в фильтре слова
+    """Удаляет раздачи, содержащие слова, указанные в фильтре
     """
     if filter is NoWords:
         raise MagnettoMisuseError("Initialize NoWords filter first. "
@@ -90,7 +91,7 @@ def handler_filter_nowords(items, filter):
 
     tmp_arr = []
     for item in items:
-        if item.name not in filter:
+        if item.name.lower() not in filter:
             tmp_arr.append(item)
     return tmp_arr
 
@@ -126,6 +127,9 @@ def handler_filter_dateregistered(items, filter):
 
 
 def handler_filter_noequalsize(items, filter):
+    """Удаляет раздачи, отличающиеся по размеру менее чем на filter процент
+    """
+
     # можно передавать в фильтр просто класс
     if filter is NoEqualSize:
         filter = NoEqualSize()
@@ -155,29 +159,29 @@ def handler_filter_noequalsize(items, filter):
 
 
 def handler_filter_videoresolution(items, filter):
-    """Проверяет наличие ключевых слов для разрешения у каждого item
+    """Проверяет наличие ключевых слов для разрешения
     """
     tmp_arr = []
     for item in items:
-        if filter.value.strip().lower() in item.name.lower():
+        if str(filter).lower() in item.name.lower():
             tmp_arr.append(item)
     return tmp_arr
 
 
 def handler_filter_videosource(items, filter):
-    """Проверяет наличие ключевого слова из Source.ITEM в названии раздачи
+    """Проверяет наличие ключевых слов для источника видео в раздаче
     """
     tmp_arr = []
     for item in items:
-        is_contain = False
-        words = filter.value.strip().split(',')
-        for word in words:
-            if word and word.lower() in item.name.lower():
-                is_contain = True
-        if is_contain:
-            tmp_arr.append(item)
+        for word in filter:
+            if word and (word.lower() in item.name.lower()):
+                tmp_arr.append(item)
+                break
+
     return tmp_arr
 
 
 def handler_filter_limit(items, filter):
+    """Ограничивает количество возвращаемых значений
+    """
     return items[:int(filter)]

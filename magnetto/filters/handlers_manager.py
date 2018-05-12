@@ -5,7 +5,8 @@ from .manager import FiltersManager
 
 class FilterHandlersManager(UserList):
     """Выполняет фильтрацию выборки с трекера после выполнения запроса.
-    Хранит ссылки на обработчики для фильтров.
+    Инициализируется элементами типа: [тип фильтра, ссылка на
+    функцию-обработчик].
 
     Example:
         >>> filters = FilterHandlers([
@@ -15,7 +16,7 @@ class FilterHandlersManager(UserList):
     """
 
     def handle(self, items, filters):
-        """Вызывает обработчики для обработки соответствующего типа фильтра.
+        """Вызывает обработчики для соответствующего типа фильтра.
         """
         if not isinstance(filters, FiltersManager):
             filters_manager = FiltersManager(filters)

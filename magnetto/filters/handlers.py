@@ -13,5 +13,5 @@ filter_handlers_manager = FilterHandlersManager((
     (core.Limit, handler_definitions.handler_filter_limit),
 ))
 """Глобальный объект, для хранения всех функций-обработчиков.
-Фильтры указываются в порядке их обработки
+Фильтры указываются в порядке их вызова.
 """
