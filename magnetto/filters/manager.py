@@ -1,9 +1,9 @@
-from collections import Counter, UserDict
+from collections import Counter, UserList
 
 from magnetto.errors import MagnettoMisuseError
 
 
-class FiltersManager(UserDict):
+class FiltersManager(UserList):
     """Удобный способ работы с массивом фильтров. Выполняет проверки на
     единственность переданного типа фильтра. Объединяет фильтры с фильтрами по
     умолчанию.
@@ -22,7 +22,8 @@ class FiltersManager(UserDict):
         self.appends(filters)
 
     def appends(self, filters):
-        """Проверяет, что передан только 1 фильтр одного типа. Дополняет filters фильтрами по умолчанию, в случае отсутствия фильтра такого же
+        """Проверяет, что передан только 1 фильтр одного типа. Дополняет
+        filters фильтрами по умолчанию, в случае отсутствия фильтра такого же
         типа.
         """
         # сначала добавим фильтры по умолчанию (если такие отсутствуют)
@@ -36,7 +37,8 @@ class FiltersManager(UserDict):
                 filters.append(default)
 
         # не должно быть одинаковых типов фильтров
-        counter = Counter(filters)
+        keys = [type(filter) for filter in filters]
+        counter = Counter(keys)
         if max(counter.values()) > 1:
             raise MagnettoMisuseError(
                 "Передано несколько фильтров одного типа")
@@ -58,3 +60,6 @@ class FiltersManager(UserDict):
 
         # не нашли фильтр такого типа
         return None
+
+    def __contains__(self, filter_type):
+        return bool(self.get(filter_type))

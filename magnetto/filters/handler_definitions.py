@@ -2,7 +2,8 @@ import time
 
 from magnetto.errors import MagnettoMisuseError
 
-from .core import Order, OrderBy, LimitSize, DateRegistered
+from .core import (Order, OrderBy, LimitSize, DateRegistered, NoWords,
+                   NoEqualSize)
 
 
 def handler_filter_order(items, filter):

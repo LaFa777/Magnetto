@@ -1,6 +1,7 @@
 from enum import Enum
 from collections import UserList
 from magnetto import MagnettoMisuseError
+from magnetto.utils import parse_size
 
 
 class OrderBy(Enum):
@@ -118,7 +119,8 @@ class LimitSize:
     """Удаляет раздачи, размер которых больше указанного
 
     Attributes:
-        size (int): размер в мегабайтах. Примеры: [1, "1024", "1024GB", "1024МБ"]
+        size (int): размер в мегабайтах. Примеры: [1, "1024", "1024GB",
+        "1024МБ"]
     """
 
     def __init__(self, size):
@@ -152,7 +154,7 @@ class NoWords(UserList):
         """
         args = map(lambda word: word.lower(), args)
 
-        self.data = args
+        self.data = tuple(args)
 
 
 class NoEqualSize:
