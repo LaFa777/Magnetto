@@ -20,7 +20,7 @@ class ResultParse:
         name (str): название раздачи
         url (str): ссылка на страницу с раздачей
         category (str): категория
-        size (str): размер (в байтах)
+        size (str): размер (в мегабайтах)
         seeders (str): количество раздающих
         leechers (str): количество скачивающих
         downloads (str): количество скачиваний
