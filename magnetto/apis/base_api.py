@@ -1,11 +1,11 @@
-"""Все классы Api должны наследовать ``BaseApi``"""
+"""Все классы Api должны наследоваться от ``BaseApi``"""
 
-from abc import ABC, abstractproperty, abstractmethod
+from abc import ABCMeta, abstractmethod
 from grab import Grab
 
 
-class BaseApi(ABC):
-    """Все классы Api должны наследовать ``BaseApi``"""
+class BaseApi(metaclass=ABCMeta):
+    """Все классы Api должны наследоваться от ``BaseApi``"""
 
     @abstractmethod
     def __init__(self, grab=Grab()):
@@ -22,6 +22,14 @@ class BaseApi(ABC):
         строкой капчи заполняет старую форму и пробует выполнить ёё отправку на
         сервер.
 
+        Example:
+            >>> try:
+            >>>    api.authorization(login, password)
+            >>> except MagnettoCaptchaError as err:
+            >>>    print("Captcha url: " + err.url)
+            >>>    captcha = input()
+            >>>    api.authorization(captcha)
+
         Raises:
             ``MagnettoIncorrectСredentials``: Введены неверные
                 данные для входа
@@ -30,26 +38,23 @@ class BaseApi(ABC):
         """
 
     @abstractmethod
-    def search(self, value, filters=None):
+    def search(self, query, filters=[]):
         """Выполняет запрос поиска по трекеру.
 
         Args:
-            value (str): Поисковый запрос
-            categories (List[filters]): Список категорий для
-                фильтрации конечной выборки
-            page (int): Страница поиска
+            query (str): Поисковый запрос.
+            filters (List[filter]): фильтры, для уточнения поиска
 
         Returns:
             ``List[ResultParsePage]``
 
         Raises:
             ``MagnettoAuthError``
-            TODO: ошибка сервера
-            TODO: ошибка парсинга
+            ``MagnettoParseError``
 
         Todo:
             * query - \w{3,}*
         """
 
-    def top(self, filters=None):
+    def top(self, filters=[]):
         pass

@@ -1,4 +1,3 @@
-from collections import defaultdict
 from urllib.parse import quote_plus
 
 from grab import Grab
@@ -6,8 +5,7 @@ from grab.error import DataNotFound
 
 import magnetto
 from magnetto.errors import (MagnettoCaptchaError, MagnettoMisuseError,
-                             MagnettoAuthError, MagnettoIncorrectСredentials)
-
+                             MagnettoIncorrectСredentials)
 from magnetto.filters import (FiltersManager, filter_handlers_manager,
                               OrderBy, Order, VideoResolution, VideoSource,
                               NoWords, NoZeroSeeders)
@@ -20,7 +18,8 @@ from magnetto.parsers import RutrackerParser
 
 class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
-    def __init__(self, grab=Grab(),
+    def __init__(self,
+                 grab=Grab(),
                  parser=RutrackerParser(),
                  filter_handlers=filter_handlers_manager):
         self._grab = grab.clone()
@@ -58,8 +57,8 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
                 doc.set_input_by_xpath(
                     '//input[starts-with(@name,"cap_code_")]', captcha)
 
-            doc.set_input('login_username', login)
-            doc.set_input('login_password', password)
+            doc.set_input('login_username', self._login)
+            doc.set_input('login_password', self._password)
         # вход уже выполнен
         except DataNotFound:
             return True
@@ -74,11 +73,12 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
         return True
 
     # доп инфа: https://rutracker.org/forum/viewtopic.php?t=101236
+    # TODO: уточнение поиска для категорий (необходимо т.к. не всегда поиск
+    # возращает то что нужно)
     def search(self, query, filters=[]):
 
         self.is_logged()
 
-        # добавляем отсутствующие фильтры
         filters = FiltersManager(filters, [Order(OrderBy.SEEDERS)])
 
         # формируем урл для поиска
@@ -101,35 +101,35 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
             OrderBy.LEECHERS: "&o=11",
             OrderBy.SIZE: "&o=7",
         }
-        for column, str in orderByTable.items():
+        for column, param in orderByTable.items():
             if filters.get(Order).column == column:
-                url += str
+                url += param
 
         # Выбор качества
-        if filters.get(VideoResolution):
-            query += ' ' + str(filters[VideoResolution])
+        if VideoResolution in filters:
+            query += ' ' + str(filters.get(VideoResolution))
 
         # выбор формата
-        if filters.get(VideoSource):
-            query += ' ' + str(filters[VideoSource]).replace(',', ' | ')
+        if VideoSource in filters:
+            query += ' ' + str(filters.get(VideoSource)).replace(',', ' | ')
 
         # добавляем каждое слово из фильтра NoWords в запрос
-        if filters.get(NoWords):
-            for word in filters[NoWords]:
+        if NoWords in filters:
+            for word in filters.get(NoWords):
                 query += " -" + str(word)
 
         # убираем раздачи без сидеров
-        if filters.get(NoZeroSeeders):
+        if NoZeroSeeders in filters:
             url += "&sd=1"
 
         url += "&nm=" + quote_plus(query)
 
-        doc = self._grab.request(url=url)
+        self._grab.request(url=url)
 
         self.is_logged()
 
         # разбор страницы
-        items = self._parser.parse_search(doc)
+        items = self._parser.parse_search(self._grab.doc)
 
         # выполним пост обработку
         items = self._filter_handlers.handle(items, filters)
