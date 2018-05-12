@@ -34,6 +34,6 @@ class CheckAuthMixin:
             ``MagnettoAuthError``
         """
         if not self._grab.doc.text_search(self._login):
-            raise MagnettoAuthError("Error authorization")
+            raise MagnettoAuthError("Authorization failed")
 
         return True

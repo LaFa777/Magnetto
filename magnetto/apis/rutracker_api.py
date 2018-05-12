@@ -1,3 +1,4 @@
+from collections import defaultdict
 from urllib.parse import quote_plus
 
 from grab import Grab
@@ -6,10 +7,11 @@ from grab.error import DataNotFound
 import magnetto
 from magnetto.errors import (MagnettoCaptchaError, MagnettoMisuseError,
                              MagnettoAuthError, MagnettoIncorrectСredentials)
-from magnetto.filters import (OrderBy, Order, Resolution, Source, Year,
+
+from magnetto.filters import (FiltersManager, filter_handlers_manager,
+                              OrderBy, Order, VideoResolution, VideoSource,
                               NoWords, NoZeroSeeders)
 
-from magnetto.apis.core import api_filters_method
 from magnetto.apis import BaseApi
 from magnetto.apis.mixins import CheckAuthMixin, LastRequestMixin
 
@@ -18,14 +20,14 @@ from magnetto.parsers import RutrackerParser
 
 class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
-    HOME = None
-
-    def __init__(self, grab=Grab()):
+    def __init__(self, grab=Grab(),
+                 parser=RutrackerParser(),
+                 filter_handlers=filter_handlers_manager):
         self._grab = grab.clone()
-        self._parser = RutrackerParser()
+        self._parser = parser
+        self._filter_handlers = filter_handlers
         self._login = ""
         self._password = ""
-        self.HOME = magnetto.RUTRACKER_URL
 
     def authorization(self, login, password, captcha=None):
         # NOTE: Добавить возможность при повторном запросе передавать только
@@ -40,7 +42,7 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
         # если форме необходим ввод капчи, то выполним ввод в старую форму
         # из прошлого запроса
         if not captcha:
-            doc = self._grab.go(self.HOME + "login.php")
+            doc = self._grab.go(magnetto.RUTRACKER_URL + "login.php")
         else:
             doc = self._grab.doc
 
@@ -71,32 +73,27 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
         return True
 
-    # TODO: реализовать вспомогательные элементы поиска (* часть текста, +СЛОВО
-    # раздача должна содержать это слово, -СЛОВО исключить слово,
-    # СЛОВО | СЛОВО или)
     # доп инфа: https://rutracker.org/forum/viewtopic.php?t=101236
-    @api_filters_method
-    def search(self, query, filters=[], page=0, limit=999):
+    def search(self, query, filters=[]):
 
-        # вход не был выполнен
-        if not self._login:
-            raise MagnettoAuthError()
+        self.is_logged()
 
         # добавляем отсутствующие фильтры
-        filters = self.add_filters_default(filters)
-
-        RESULTS_ON_PAGE = 50
+        filters = FiltersManager(filters, [Order(OrderBy.SEEDERS)])
 
         # формируем урл для поиска
-        url = "{home}tracker.php?start={page}".format(
-            home=self.HOME,
-            page=RESULTS_ON_PAGE * page
+        url = "{home}tracker.php?".format(
+            home=magnetto.RUTRACKER_URL
         )
 
-        filtersTable = {
-            Order.DESC: "&s=2",
-            Order.ASC: "&s=1",
+        # направление сортировки
+        if filters.get(Order).asc:
+            url += "&s=1"
+        else:
+            url += "&s=2"
 
+        # столбец для сортировки
+        orderByTable = {
             OrderBy.CREATE: "&o=1",
             OrderBy.NAME: "&o=2",
             OrderBy.DOWNLOADS: "&o=4",
@@ -104,49 +101,37 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
             OrderBy.LEECHERS: "&o=11",
             OrderBy.SIZE: "&o=7",
         }
-
-        # соотносим фильтры из таблицы их действиям
-        for filter in filters:
-            url += filtersTable.get(filter, '')
+        for column, str in orderByTable.items():
+            if filters.get(Order).column == column:
+                url += str
 
         # Выбор качества
-        for filter in filters:
-            if type(filter) is Resolution:
-                query += " " + filter.value
+        if filters.get(VideoResolution):
+            query += ' ' + str(filters[VideoResolution])
 
         # выбор формата
-        for filter in filters:
-            if type(filter) is Source:
-                query += ' ' + filter.value.replace(',', ' | ')
-
-        # добавляем год
-        for year in filters:
-            if type(year) is Year:
-                query += " " + str(year)
+        if filters.get(VideoSource):
+            query += ' ' + str(filters[VideoSource]).replace(',', ' | ')
 
         # добавляем каждое слово из фильтра NoWords в запрос
-        for filter in filters:
-            if type(filter) is NoWords:
-                for word in filter.argv:
-                    query += " -" + str(word)
+        if filters.get(NoWords):
+            for word in filters[NoWords]:
+                query += " -" + str(word)
 
         # убираем раздачи без сидеров
-        if NoZeroSeeders in filters:
+        if filters.get(NoZeroSeeders):
             url += "&sd=1"
 
         url += "&nm=" + quote_plus(query)
 
-        # подготавливаем для запроса
-        self._grab.setup(url=url)
+        doc = self._grab.request(url=url)
 
-        # выполняем сам запрос
-        self._grab.request()
-
-        # проверяем, что после выполнения запроса мы залогинены
         self.is_logged()
 
         # разбор страницы
-        items = self._parser.parse_search(self._grab.doc)
+        items = self._parser.parse_search(doc)
 
-        # нужно возвращать ВСЕ элементы. Фильтрация происходит в декораторе
+        # выполним пост обработку
+        items = self._filter_handlers.handle(items, filters)
+
         return items

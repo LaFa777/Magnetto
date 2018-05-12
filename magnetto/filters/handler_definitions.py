@@ -3,85 +3,65 @@ import time
 import attr
 
 from magnetto.errors import MagnettoMisuseError
-from magnetto.apis.core import GlobalFilters
-from magnetto.filters import (Size, NoZeroSeeders, Category, NoWords,
-                              Registered, NoEqualSize, OrderBy, Order,
-                              Resolution, Source, Year)
+
+from .core import OrderBy, DateRegistered
 
 
-# TODO: добавить Or
-
-def handler_filter_order(items, filter, arg_filters):
+def handler_filter_order(items, filter):
     """Сортирует раздачи по убыванию или возрастанию
     """
 
     # сначала определим столбец, по которому происходит сортировка
     index = None
-    if OrderBy.CREATE in arg_filters:
+    if OrderBy.CREATE is filter.column:
         index = "created"
-    elif OrderBy.NAME in arg_filters:
+    elif OrderBy.NAME is filter.column:
         index = "name"
-    elif OrderBy.DOWNLOADS in arg_filters:
+    elif OrderBy.DOWNLOADS is filter.column:
         index = "downloads"
-    elif OrderBy.SEEDERS in arg_filters:
+    elif OrderBy.SEEDERS is filter.column:
         index = "seeders"
-    elif OrderBy.LEECHERS in arg_filters:
+    elif OrderBy.LEECHERS is filter.column:
         index = "leechers"
-    elif OrderBy.SIZE in arg_filters:
+    elif OrderBy.SIZE is filter.column:
         index = "size"
     else:
         return items
 
     # для числовых сортируем предварительно приведя к int
-    if "name" in index and filter is Order.DESC:
-        return sorted(items, key=lambda item: getattr(item, index), reverse=True)
-    elif "name" in index and filter is Order.ASC:
-        return sorted(items, key=lambda item: getattr(item, index), reverse=False)
-    elif filter is Order.DESC:
-        return sorted(items, key=lambda item: int(getattr(item, index)), reverse=True)
-    elif filter is Order.ASC:
-        return sorted(items, key=lambda item: int(getattr(item, index)), reverse=False)
+    # изменить как в книжке getattr
+    if "name" in index and filter.asc is False:
+        return sorted(items,
+                      key=lambda item: getattr(item, index),
+                      reverse=True)
+    elif "name" in index and filter.asc is True:
+        return sorted(items,
+                      key=lambda item: getattr(item, index),
+                      reverse=False)
+    elif filter.asc is False:
+        return sorted(items,
+                      key=lambda item: int(getattr(item, index)),
+                      reverse=True)
+    elif filter.asc is True:
+        return sorted(items,
+                      key=lambda item: int(getattr(item, index)),
+                      reverse=False)
     else:
         return items
 
 
-GlobalFilters.append(Order, handler_filter_order)
-
-
-def handler_filter_size(items, filter, arg_filters):
+def handler_filter_limitsize(items, filter):
     """Удаляет раздачи, не соответсвующие переданному фильтру размера
     """
-    # устанавливаем фильтр по размеру
-    filter_size = None
-    if Size.TINY is filter:
-        filter_size = range(0, 1301)
-    elif Size.SMALL is filter:
-        filter_size = range(1301, 2251)
-    elif Size.MEDIUM is filter:
-        filter_size = range(2251, 4097)
-    elif Size.BIG is filter:
-        filter_size = range(4097, 9729)
-    elif Size.LARGE is filter:
-        filter_size = range(9729, 25601)
-    elif Size.HUGE is filter:
-        filter_size = range(25601, 9999999999)
-
-    # если такой фильтр не был передан, то возвращаем без изменений
-    if not filter_size:
-        return items
-
     # убираем не соответствующие фильтру раздачи
     tmp_arr = []
     for item in items:
-        if int(item.size) in filter_size:
+        if int(item.size) <= filter_size:
             tmp_arr.append(item)
     return tmp_arr
 
 
-GlobalFilters.append(Size, handler_filter_size)
-
-
-def handler_filter_nozeroseeders(items, filter, arg_filters):
+def handler_filter_nozeroseeders(items, filter):
     """Удаляет раздачи без сидеров
     """
     tmp_arr = []
@@ -91,10 +71,7 @@ def handler_filter_nozeroseeders(items, filter, arg_filters):
     return tmp_arr
 
 
-GlobalFilters.append(NoZeroSeeders, handler_filter_nozeroseeders)
-
-
-def handler_filter_category(items, filter, arg_filters):
+def handler_filter_category(items, filter):
     """Удаляет раздачи, не соответствующие категории
     """
     tmp_arr = []
@@ -104,10 +81,7 @@ def handler_filter_category(items, filter, arg_filters):
     return tmp_arr
 
 
-GlobalFilters.append(Category, handler_filter_category)
-
-
-def handler_filter_nowords(items, filter, arg_filters):
+def handler_filter_nowords(items, filter):
     """Удаляет раздачи, содержащие указанные в фильтре слова
     """
     if filter is NoWords:
@@ -121,10 +95,7 @@ def handler_filter_nowords(items, filter, arg_filters):
     return tmp_arr
 
 
-GlobalFilters.append(NoWords, handler_filter_nowords)
-
-
-def handler_filter_registered(items, filter, arg_filters):
+def handler_filter_dateregistered(items, filter):
     """Фильтр по дате регистрации раздачи
     """
     current_time = int(float(time.time()))
@@ -133,15 +104,15 @@ def handler_filter_registered(items, filter, arg_filters):
     HOUR = 60 * 60
     DAY = HOUR * 24
 
-    if Registered.TODAY is filter:
+    if DateRegistered.TODAY is filter:
         filter_time = DAY
-    elif Registered.YESTERDAY is filter:
+    elif DateRegistered.YESTERDAY is filter:
         filter_time = DAY * 2
-    elif Registered.FOR_3_DAYS is filter:
+    elif DateRegistered.FOR_3_DAYS is filter:
         filter_time = DAY * 3
-    elif Registered.FOR_WEEK is filter:
+    elif DateRegistered.FOR_WEEK is filter:
         filter_time = DAY * 7
-    elif Registered.FOR_MONTH is filter:
+    elif DateRegistered.FOR_MONTH is filter:
         filter_time = DAY * 32
 
     if not filter_time:
@@ -154,10 +125,7 @@ def handler_filter_registered(items, filter, arg_filters):
     return tmp_arr
 
 
-GlobalFilters.append(Registered, handler_filter_registered)
-
-
-def handler_filter_noequalsize(items, filter, arg_filters):
+def handler_filter_noequalsize(items, filter):
     # можно передавать в фильтр просто класс
     if filter is NoEqualSize:
         filter = NoEqualSize()
@@ -186,10 +154,7 @@ def handler_filter_noequalsize(items, filter, arg_filters):
     return result_arr
 
 
-GlobalFilters.append(NoEqualSize, handler_filter_noequalsize)
-
-
-def handler_filter_resolution(items, filter, arg_filters):
+def handler_filter_videoresolution(items, filter):
     """Проверяет наличие ключевых слов для разрешения у каждого item
     """
     tmp_arr = []
@@ -199,10 +164,7 @@ def handler_filter_resolution(items, filter, arg_filters):
     return tmp_arr
 
 
-GlobalFilters.append(Resolution, handler_filter_resolution)
-
-
-def handler_filter_source(items, filter, arg_filters):
+def handler_filter_videosource(items, filter):
     """Проверяет наличие ключевого слова из Source.ITEM в названии раздачи
     """
     tmp_arr = []
@@ -217,21 +179,5 @@ def handler_filter_source(items, filter, arg_filters):
     return tmp_arr
 
 
-GlobalFilters.append(Source, handler_filter_source)
-
-
-def handler_filter_year(items, filter, arg_filters):
-    """Проверяет наличие года выпуска в названии раздачи
-    """
-    if filter is Year:
-        raise MagnettoMisuseError("Initialize Year filter first. "
-                                  "Example: Year(\"2018\")")
-
-    tmp_arr = []
-    for item in items:
-        if str(filter) in item.name:
-            tmp_arr.append(item)
-    return tmp_arr
-
-
-GlobalFilters.append(Year, handler_filter_year)
+def handler_filter_limit(items, filter):
+    return items[:int(filter)]

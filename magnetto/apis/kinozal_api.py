@@ -5,9 +5,8 @@ from grab import Grab
 import magnetto
 from magnetto.errors import (MagnettoIncorrectСredentials, MagnettoMisuseError,
                              MagnettoAuthError)
-from magnetto.filters import (Category, OrderBy, Order, Year, Resolution,
-                              Registered, TypeRelease, Size, Source)
-from magnetto.apis.core import api_filters_method
+# from magnetto.filters import (Category, OrderBy, Order, Year, Resolution,
+#                               Registered, TypeRelease, Size, Source)
 from magnetto.apis.mixins import LastRequestMixin, CheckAuthMixin
 from magnetto.apis import BaseApi
 from magnetto.parsers import KinozalParser
@@ -52,7 +51,6 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
 
         return True
 
-    @api_filters_method
     def search(self, query, filters=[], page=0, limit=999):
 
         # вход не был выполнен
@@ -142,4 +140,4 @@ class KinozalApi(BaseApi, CheckAuthMixin, LastRequestMixin):
         # разбор страницы
         items = self._parser.parse_search(self._grab.doc)
 
-        return items
+        return items[:limit]

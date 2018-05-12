@@ -22,16 +22,18 @@ class RutrackerParser(BaseParser):
         # заполняем корневой форум
         el = doc.xpath('//option[contains(text(), "{}")]'
                        .format(category["forum"]))[0]
+
         if "root_forum" in el.classes:
             category["root_forum"] = el.text
         else:
+            tmp = el.getprevious()
             while True:
-                el = el.getprevious()
-                if el is None:
+                if tmp is None:
                     break
-                if "root_forum" in el.classes:
-                    category["root_forum"] = el.text
+                if "root_forum" in tmp.classes:
+                    category["root_forum"] = tmp.text
                     break
+                tmp = tmp.getprevious()
 
         # заполняем категорию
         category["root"] = el.getparent().get("label")

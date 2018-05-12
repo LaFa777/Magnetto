@@ -3,35 +3,9 @@
 from abc import ABC, abstractproperty, abstractmethod
 from grab import Grab
 
-from magnetto.filters import OrderBy, Order
-
 
 class BaseApi(ABC):
     """Все классы Api должны наследовать ``BaseApi``"""
-
-    filters_default = [OrderBy.SEEDERS, Order.DESC]
-
-    def add_filters_default(self, arg_filters):
-        """Добавляет фильтр из ``self.filters_default`` в ``arg_filters``
-        только в том случае, если фильтр такого же типа отсутствует в
-        ``arg_filters``
-
-        Args:
-            arg_filters (List[filters]): Массив фильтров
-        """
-        for def_filter in self.filters_default:
-            for arg_filter in arg_filters:
-                if type(def_filter) == type(arg_filter):
-                    break
-            else:
-                arg_filters.append(def_filter)
-        return arg_filters
-
-    @abstractproperty
-    def HOME(self):
-        """Сссылка на главную страницу сайта.
-        """
-        pass
 
     @abstractmethod
     def __init__(self, grab=Grab()):
@@ -52,10 +26,11 @@ class BaseApi(ABC):
             ``MagnettoIncorrectСredentials``: Введены неверные
                 данные для входа
             ``MagnettoCaptchaError``: На странице обнаружена капча
+            TODO: ошибка сервера
         """
 
     @abstractmethod
-    def search(self, value, filters=[], page=0, limit=999):
+    def search(self, value, filters=None):
         """Выполняет запрос поиска по трекеру.
 
         Args:
@@ -63,11 +38,18 @@ class BaseApi(ABC):
             categories (List[filters]): Список категорий для
                 фильтрации конечной выборки
             page (int): Страница поиска
-            limit (int): Количество возвращаемых результатов
 
         Returns:
             ``List[ResultParsePage]``
 
         Raises:
             ``MagnettoAuthError``
+            TODO: ошибка сервера
+            TODO: ошибка парсинга
+
+        Todo:
+            * query - \w{3,}*
         """
+
+    def top(self, filters=None):
+        pass

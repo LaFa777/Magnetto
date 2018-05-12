@@ -2,7 +2,7 @@ import sys
 sys.path.append('..')
 import settings
 from settings import trackers
-from magnetto import (RutrackerApi, Year, Resolution, Size)
+from magnetto import RutrackerApi, Limit, Category
 from grab import Grab
 
 
@@ -17,5 +17,6 @@ api = RutrackerApi(grab)
 api.authorization(trackers[RutrackerApi]['login'],
                   trackers[RutrackerApi]['password'])
 
-print(api.search(query="начало", filters=[
-        Year(2010), Resolution.FULL_HD, Size.LARGE], limit=1))
+print(api.search(query="начало", filters=[Limit(1), Category.FILMS]))
+
+print(api.get_last_request_data())

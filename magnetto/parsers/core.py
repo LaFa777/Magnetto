@@ -59,33 +59,3 @@ def transformParseError(function):
         except (DataNotFound, IndexError):
             raise MagnettoParseError
     return handleErrors
-
-
-def parse_date(str):
-    unix = 0
-
-    time_str = re.findall(r'\d{1,2}:\d{2}', str)[0]
-    date_str = re.findall(r'\d{1,2}\.\d{1,2}\.\d{4}', str)[0]
-
-    datetime_str = "{} {}".format(date_str, time_str)
-
-    unix = time.strptime(datetime_str, "%d.%m.%Y %H:%M")
-
-    # переводим в timestamp
-    return repr(int(float(time.mktime(unix))))
-
-
-def parse_size(str):
-    size_str = re.findall(r'[\d\.]+', str)[0]
-    size_int = int(float(size_str))
-    size_mb = 0
-    if "ГБ" in str or "GB" in str:
-        size_mb = size_int * 1024
-    elif "МБ" in str or "MB" in str:
-        size_mb = size_int
-    # TODO: по умолчанию считать байтами?
-    else:
-        raise MagnettoParseError(
-            "Invalid parse size_str(\"{}\")".format(size_str))
-
-    return repr(int(float(size_mb)))

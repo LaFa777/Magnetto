@@ -1,8 +1,9 @@
 import re
 import magnetto
 from magnetto.filters import Category
-from magnetto.parsers import (BaseParser, transformParseError, ResultParse,
-                              parse_size, parse_date,)
+from magnetto.parsers import BaseParser, transformParseError, ResultParse
+
+from magnetto.utils import parse_size, parse_date
 
 
 class KinozalParser(BaseParser):
@@ -52,7 +53,6 @@ class KinozalParser(BaseParser):
                 size=parse_size(tr.xpath('td[4]/text()')[0]),
                 seeders=tr.xpath('td[5]/text()')[0],
                 leechers=tr.xpath('td[6]/text()')[0],
-                downloads="",
                 created=parse_date(tr.xpath('td[7]/text()')[0]),
                 torrent=self.HOME + "download.php?id=" + str(topic_id),
                 magnet=""
