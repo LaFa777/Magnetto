@@ -29,11 +29,15 @@ class RutrackerApi(BaseApi, CheckAuthMixin, LastRequestMixin):
         self._password = ""
 
     def authorization(self, login, password, captcha=None):
-        # NOTE: Добавить возможность при повторном запросе передавать только
-        # капчу?
-        self._login = login
-        self._password = password
 
+        # если передан только 1 параметр, то скорее всего это была капча
+        if self._login and self._password and login and not password:
+            captcha = login
+        else:
+            self._login = login
+            self._password = password
+
+        # если передана капча и функция ранее не вызывалась
         if captcha and not self._grab.doc.body:
             raise MagnettoMisuseError(
                 "Please execute .authorization(login, pass) first")
