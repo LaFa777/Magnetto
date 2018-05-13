@@ -18,8 +18,7 @@ def main():
             dp.authorization(api, conf["login"], conf["password"])
         except MagnettoCaptchaError as err:
             print("Woop woop! Captcha is here: " + err.url)
-            print('Please input captcha: ', end='')
-            captcha = input()
+            captcha = input('Please input captcha: ')
             # попробуем снова...
             dp.authorization(api, conf["login"], conf["password"], captcha)
 
